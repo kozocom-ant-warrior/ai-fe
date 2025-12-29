@@ -6,8 +6,13 @@ import AdvancedOptions, { AdvancedOptionsState } from './AdvancedOptions';
 import { sendThinkingRequest } from '../../api/thinking';
 import Button from '../../components/Button';
 import { jdInputFormSchema, parseZodErrors, type FormErrors } from '../../schemas/jdInputSchema';
+import { type CvMapping } from './CvMappingsTable';
 
-export default function JdInputSection() {
+interface JdInputSectionProps {
+  onThinkingSuccess?: (cvMappings: CvMapping[]) => void;
+}
+
+export default function JdInputSection({ onThinkingSuccess }: JdInputSectionProps) {
   const [jdFiles, setJdFiles] = useState<File[]>([]);
   const [jdInputType, setJdInputType] = useState<'text' | 'file'>('text');
   const [jdText, setJdText] = useState('');
@@ -89,11 +94,17 @@ export default function JdInputSection() {
       });
 
       console.log('Thinking response:', response);
-      // Có thể thêm thông báo thành công ở đây
+      
+      // Gọi callback với CV mappings từ response
+      if (response.data?.cv_mappings && Array.isArray(response.data.cv_mappings)) {
+        onThinkingSuccess?.(response.data.cv_mappings);
+      } else {
+        onThinkingSuccess?.([]);
+      }
     } catch (error: any) {
       console.error('Error sending thinking request:', error);
-      // Có thể thêm thông báo lỗi ở đây
       alert(error.message || 'Có lỗi xảy ra khi gửi yêu cầu');
+      onThinkingSuccess?.([]);
     } finally {
       setIsThinking(false);
     }
@@ -115,13 +126,30 @@ export default function JdInputSection() {
     }
   };
 
+  const handleReset = () => {
+    setJdFiles([]);
+    setJdInputType('text');
+    setJdText('');
+    setResponseRequirement('');
+    setAdvancedOptions({
+      scoreMatching: false,
+      detectDuplicate: false,
+      cvPresentation: false,
+      interviewQuestions: false,
+      suggestOtherRoles: false,
+      certBenefit: false,
+    });
+    setErrors({});
+    onThinkingSuccess?.([]);
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">
-        Job Description & Yêu cầu
-      </h2>
-      
-      <div className="space-y-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          Job Description & Yêu cầu
+        </h2>
+        
+        <div className="space-y-6">
         {/* JD Input Type Switch */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
@@ -323,8 +351,8 @@ export default function JdInputSection() {
           )}
         </div>
 
-        {/* Thinking Button */}
-        <div>
+        {/* Thinking and Reset Buttons */}
+        <div className="flex gap-3">
           <Button
             text="Thinking"
             onClick={handleThinking}
@@ -333,6 +361,13 @@ export default function JdInputSection() {
             loadingText="Đang xử lý..."
             fullWidth={true}
             variant="primary"
+          />
+          <Button
+            text="Reset"
+            onClick={handleReset}
+            disabled={isThinking}
+            fullWidth={true}
+            variant="secondary"
           />
         </div>
       </div>

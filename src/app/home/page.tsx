@@ -5,12 +5,15 @@ import { useRouter } from 'next/navigation';
 import CvFilesTable from './components/CvFilesTable';
 import UploadCvSection from './components/UploadCvSection';
 import JdInputSection from './components/JdInputSection';
+import CvMappingsTable from './components/CvMappingsTable';
 import { CvFileFromBackend } from '../api/files';
+import { type CvMapping } from './components/CvMappingsTable';
 
 export default function Home() {
   const [cvFiles, setCvFiles] = useState<File[]>([]);
   const [cvFilesFromBackend, setCvFilesFromBackend] = useState<CvFileFromBackend[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [cvMappings, setCvMappings] = useState<CvMapping[]>([]);
   const router = useRouter();
 
   const handleCvUpload = (files: File[]) => {
@@ -36,6 +39,10 @@ export default function Home() {
     setCvFilesFromBackend(prev => prev.filter(f => f.id !== id));
   };
 
+  const handleThinkingSuccess = (mappings: CvMapping[]) => {
+    setCvMappings(mappings);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -54,7 +61,14 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8 py-8">
+        {/* CV Mappings Table - Full width phía trên */}
+        {cvMappings.length > 0 && (
+          <div className="mb-6">
+            <CvMappingsTable cvMappings={cvMappings} />
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Column 1: Upload CV */}
           <div className="bg-white rounded-lg shadow-sm p-6">
@@ -76,7 +90,7 @@ export default function Home() {
           </div>
 
           {/* Column 2: JD Input & Response Requirement */}
-          <JdInputSection />
+          <JdInputSection onThinkingSuccess={handleThinkingSuccess} />
         </div>
       </main>
     </div>
