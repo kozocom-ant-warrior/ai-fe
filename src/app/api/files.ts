@@ -70,7 +70,7 @@ export async function fetchFiles(): Promise<CvFileFromBackend[]> {
  */
 export async function deleteFile(id: string): Promise<void> {
   try {
-    await apiClient.delete(`/files/${id}`);
+    await apiClient.delete(`cv/files/${id}`);
   } catch (err) {
     console.error('Error deleting file:', err);
     throw new Error('Có lỗi xảy ra khi xóa file');

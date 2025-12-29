@@ -21,6 +21,11 @@ interface UploadResponse {
   updated_at: string;
 }
 
+interface FileListResponse {
+  total: number;
+  files: UploadResponse[];
+}
+
 export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvSectionProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -46,31 +51,29 @@ export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvS
     setUploadError(null);
 
     try {
-      const uploadPromises = selectedFiles.map(async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch('http://localhost:8000/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Upload failed: ${response.status} ${errorText}`);
-        }
-
-        const data: UploadResponse = await response.json();
-        return data;
+      // Tạo FormData và append tất cả files với cùng field name "files"
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        formData.append('files', file);
       });
 
-      const results = await Promise.all(uploadPromises);
+      const response = await fetch('http://localhost:8000/cv/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Upload failed: ${response.status} ${errorText}`);
+      }
+
+      const data: FileListResponse = await response.json();
       
       // Call the onUpload callback with the files
       onUpload(selectedFiles);
       
       // Hiển thị toast thành công
-      toast.success(`Đã upload thành công ${results.length} file(s)`);
+      toast.success(`Đã upload thành công ${data.total} file(s)`);
       
       setSelectedFiles([]);
       if (fileInputRef.current) {
