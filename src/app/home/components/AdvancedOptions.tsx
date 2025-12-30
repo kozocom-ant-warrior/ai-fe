@@ -69,18 +69,6 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
           <label className="flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={options.scoreMatching}
-              onChange={() => handleOptionChange('scoreMatching')}
-              className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
-            />
-            <span className="ml-3 text-sm text-gray-700">
-              Chấm điểm matching với JD
-            </span>
-          </label>
-
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
               checked={options.detectDuplicate}
               onChange={() => handleOptionChange('detectDuplicate')}
               className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"

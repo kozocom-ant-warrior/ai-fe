@@ -19,6 +19,12 @@ interface CvMapping {
     missing_requirements: string[];
   };
   mapping_description: string;
+  duplicate_warning: string | null;
+  cv_presentation_comment: string;
+  interview_questions: string[];
+  suggested_roles: string[];
+  cert_comment: string;
+  file_id: number;
 }
 
 interface CvMappingsTableProps {
@@ -162,6 +168,75 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                         </ul>
                       </div>
                     )}
+                    
+                    <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
+                      {cv.duplicate_warning == '1' && (
+                        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2">
+                          <div className="text-xs font-medium text-yellow-800 mb-1">
+                            ⚠ Cảnh báo trùng lặp:
+                          </div>
+                          <div className="text-xs text-yellow-700">
+                            {cv.duplicate_warning}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {cv.cv_presentation_comment && (
+                        <div>
+                          <div className="text-xs font-medium text-gray-600 mb-1">
+                            Nhận xét CV:
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {cv.cv_presentation_comment}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {cv.suggested_roles && cv.suggested_roles.length > 0 && (
+                        <div>
+                          <div className="text-xs font-medium text-gray-600 mb-1">
+                            Vị trí đề xuất:
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {cv.suggested_roles.map((role, idx) => (
+                              <span
+                                key={idx}
+                                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800"
+                              >
+                                {role}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {cv.cert_comment && (
+                        <div>
+                          <div className="text-xs font-medium text-gray-600 mb-1">
+                            Nhận xét chứng chỉ:
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {cv.cert_comment}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {cv.interview_questions && cv.interview_questions.length > 0 && (
+                        <div>
+                          <div className="text-xs font-medium text-gray-600 mb-1">
+                            Câu hỏi phỏng vấn đề xuất:
+                          </div>
+                          <ul className="text-xs text-gray-500 space-y-1">
+                            {cv.interview_questions.map((question, idx) => (
+                              <li key={idx} className="flex items-start">
+                                <span className="text-blue-500 mr-1">•</span>
+                                <span>{question}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </td>
               </tr>
