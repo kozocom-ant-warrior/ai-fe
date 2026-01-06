@@ -1,19 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import type { AdvancedOptionsState } from '../../types/form.types';
+import type { AdvancedOptionsProps } from '../../types/component.types';
 
-export interface AdvancedOptionsState {
-  scoreMatching: boolean;
-  detectDuplicate: boolean;
-  cvPresentation: boolean;
-  interviewQuestions: boolean;
-  suggestOtherRoles: boolean;
-  certBenefit: boolean;
-}
-
-interface AdvancedOptionsProps {
-  onOptionsChange?: (options: AdvancedOptionsState) => void;
-}
+export type { AdvancedOptionsState };
 
 export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProps) {
   const [isOpen, setIsOpen] = useState(false);

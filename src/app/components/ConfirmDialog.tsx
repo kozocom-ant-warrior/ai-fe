@@ -1,18 +1,6 @@
 'use client';
 
-interface ConfirmDialogProps {
-  isOpen: boolean;
-  title: string;
-  message: string;
-  detailText?: string;
-  warningText?: string;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-  isLoading?: boolean;
-  confirmButtonColor?: 'red' | 'blue' | 'green';
-}
+import type { ConfirmDialogProps } from '../types/component.types';
 
 export default function ConfirmDialog({
   isOpen,

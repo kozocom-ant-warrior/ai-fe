@@ -25,12 +25,9 @@ export type JdInputFormData = z.infer<typeof jdInputFormSchema>;
 export type TextInputFormData = z.infer<typeof textInputSchema>;
 export type FileInputFormData = z.infer<typeof fileInputSchema>;
 
-// Helper function để parse errors từ ZodError
-export interface FormErrors {
-  jdText?: string;
-  jdFiles?: string;
-  responseRequirement?: string;
-}
+import type { FormErrors } from '../types/form.types';
+
+export type { FormErrors };
 
 export const parseZodErrors = (error: z.ZodError): FormErrors => {
   const errors: FormErrors = {};

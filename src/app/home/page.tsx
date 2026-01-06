@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../providers/AuthProvider';
 import CvFilesTable from './components/CvFilesTable';
 import UploadCvSection from './components/UploadCvSection';
 import JdInputSection from './components/JdInputSection';
 import CvMappingsTable from './components/CvMappingsTable';
 import { CvFileFromBackend } from '../api/files';
-import { type CvMapping } from './components/CvMappingsTable';
+import type { CvMapping } from '../types/cv.types';
 
 export default function Home() {
   const [cvFiles, setCvFiles] = useState<File[]>([]);
@@ -15,6 +16,14 @@ export default function Home() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [cvMappings, setCvMappings] = useState<CvMapping[]>([]);
   const router = useRouter();
+  const auth = useAuth();
+
+  // Redirect to login nếu chưa authenticated
+  useEffect(() => {
+    if (!auth.isLoading && !auth.isAuthenticated) {
+      router.push('/');
+    }
+  }, [auth.isAuthenticated, auth.isLoading, router]);
 
   const handleCvUpload = (files: File[]) => {
     setCvFiles(prev => [...prev, ...files]);
@@ -31,9 +40,25 @@ export default function Home() {
     setCvFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleLogout = () => {
-    router.push('/');
+  const handleLogout = async () => {
+    await auth.logout();
   };
+
+  // Hiển thị loading nếu đang check authentication
+  if (auth.isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="text-xl font-semibold text-gray-700">Đang tải...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị nothing nếu chưa authenticated (sẽ redirect)
+  if (!auth.isAuthenticated) {
+    return null;
+  }
 
   const handleRemoveBackendFile = (id: string) => {
     setCvFilesFromBackend(prev => prev.filter(f => f.id !== id));
@@ -50,12 +75,19 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <h1 className="text-2xl font-bold text-gray-900">Hire Graph</h1>
-            <button
-              onClick={handleLogout}
-              className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 transition"
-            >
-              Đăng xuất
-            </button>
+            <div className="flex items-center gap-4">
+              {auth.user?.email && (
+                <span className="text-sm text-gray-600">
+                  {auth.user.email}
+                </span>
+              )}
+              <button
+                onClick={handleLogout}
+                className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 transition"
+              >
+                Đăng xuất
+              </button>
+            </div>
           </div>
         </div>
       </header>

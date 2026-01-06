@@ -1,17 +1,6 @@
 'use client';
 
-interface ButtonProps {
-  text: string;
-  onClick?: () => void;
-  disabled?: boolean;
-  isLoading?: boolean;
-  loadingText?: string;
-  type?: 'button' | 'submit' | 'reset';
-  variant?: 'primary' | 'secondary' | 'danger' | 'success';
-  size?: 'sm' | 'md' | 'lg';
-  fullWidth?: boolean;
-  className?: string;
-}
+import type { ButtonProps } from '../types/component.types';
 
 export default function Button({
   text,

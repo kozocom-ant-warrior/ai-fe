@@ -1,35 +1,6 @@
 'use client';
 
-interface CvMapping {
-  cv_id: string;
-  candidate_name: string;
-  email: string;
-  phone: string;
-  position: string;
-  experience_years: number;
-  skills: string[];
-  education: {
-    degree: string;
-    university: string;
-    graduation_year: number;
-  };
-  scope: {
-    score: number;
-    matched_requirements: string[];
-    missing_requirements: string[];
-  };
-  mapping_description: string;
-  duplicate_warning: string | null;
-  cv_presentation_comment: string;
-  interview_questions: string[];
-  suggested_roles: string[];
-  cert_comment: string;
-  file_id: number;
-}
-
-interface CvMappingsTableProps {
-  cvMappings: CvMapping[];
-}
+import type { CvMapping, CvMappingsTableProps } from '../../types/cv.types';
 
 export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
   const getScoreColor = (score: number) => {
@@ -248,5 +219,4 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
   );
 }
 
-export type { CvMapping };
 

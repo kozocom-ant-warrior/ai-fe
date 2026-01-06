@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "aws-amplify": "^6.15.9",
     "axios": "^1.13.2",
     "next": "16.0.10",
     "oidc-client-ts": "^3.4.1",

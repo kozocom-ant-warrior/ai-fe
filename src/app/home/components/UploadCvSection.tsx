@@ -3,28 +3,8 @@
 import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import Button from '../../components/Button';
-
-interface UploadCvSectionProps {
-  onUpload: (files: File[]) => void;
-  onUploadSuccess?: () => void;
-}
-
-interface UploadResponse {
-  id: number;
-  filename: string;
-  original_filename: string;
-  file_path: string;
-  file_size: number;
-  file_hash: string;
-  content_type: string;
-  uploaded_at: string;
-  updated_at: string;
-}
-
-interface FileListResponse {
-  total: number;
-  files: UploadResponse[];
-}
+import type { UploadCvSectionProps } from '../../types/component.types';
+import type { UploadResponse, FileListResponse } from '../../types/file.types';
 
 export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvSectionProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);

@@ -1,25 +1,37 @@
 import axios from 'axios';
-import { AdvancedOptionsState } from '../home/components/AdvancedOptions';
+import { getAccessToken } from './authHelper';
+import type { ThinkingRequest, ThinkingResponse } from '../types/thinking.types';
+
+export type { ThinkingRequest, ThinkingResponse };
 
 // Axios instance với base URL từ biến môi trường
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 
-// Interface cho request data
-export interface ThinkingRequest {
-  jdText?: string;
-  jdFiles?: File[];
-  responseRequirement: string;
-  advancedOptions: AdvancedOptionsState;
-}
+// Thêm interceptor để tự động thêm access token vào header
+apiClient.interceptors.request.use(async (config) => {
+  const token = await getAccessToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// Interface cho response từ API /thinking
-export interface ThinkingResponse {
-  success: boolean;
-  data?: any;
-  message?: string;
-}
+// Thêm interceptor để xử lý lỗi 401 (Unauthorized)
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token hết hạn hoặc không hợp lệ, redirect về login
+      if (typeof window !== 'undefined') {
+        window.location.href = '/';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 /**
  * Gửi yêu cầu thinking lên API

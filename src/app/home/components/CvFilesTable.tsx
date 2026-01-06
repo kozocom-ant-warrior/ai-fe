@@ -3,16 +3,9 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
-import { fetchFiles, deleteFile, CvFileFromBackend } from '../../api/files';
-
-interface CvFilesTableProps {
-  cvFilesFromBackend?: CvFileFromBackend[];
-  cvFiles: File[];
-  onRemoveBackendFile: (id: string) => void;
-  onRemoveNewFile: (index: number) => void;
-  itemsPerPage?: number;
-  refreshTrigger?: number; // Trigger để refresh data khi upload thành công
-}
+import { fetchFiles, deleteFile } from '../../api/files';
+import type { CvFileFromBackend } from '../../types/file.types';
+import type { CvFilesTableProps } from '../../types/component.types';
 
 export default function CvFilesTable({
   cvFilesFromBackend: cvFilesFromBackendProp,

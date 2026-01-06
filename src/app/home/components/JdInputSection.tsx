@@ -2,15 +2,13 @@
 
 import { useState } from 'react';
 import { z } from 'zod';
-import AdvancedOptions, { AdvancedOptionsState } from './AdvancedOptions';
+import AdvancedOptions from './AdvancedOptions';
 import { sendThinkingRequest } from '../../api/thinking';
 import Button from '../../components/Button';
-import { jdInputFormSchema, parseZodErrors, type FormErrors } from '../../schemas/jdInputSchema';
-import { type CvMapping } from './CvMappingsTable';
-
-interface JdInputSectionProps {
-  onThinkingSuccess?: (cvMappings: CvMapping[]) => void;
-}
+import { jdInputFormSchema, parseZodErrors } from '../../schemas/jdInputSchema';
+import type { FormErrors, AdvancedOptionsState } from '../../types/form.types';
+import type { CvMapping } from '../../types/cv.types';
+import type { JdInputSectionProps } from '../../types/component.types';
 
 export default function JdInputSection({ onThinkingSuccess }: JdInputSectionProps) {
   const [jdFiles, setJdFiles] = useState<File[]>([]);
