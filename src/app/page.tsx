@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from './providers/AuthProvider';
 import toast from 'react-hot-toast';
@@ -15,10 +15,11 @@ export default function Login() {
   const router = useRouter();
 
   // Redirect to home nếu đã authenticated
-  if (auth.isAuthenticated && !auth.isLoading) {
-    router.push('/home');
-    return null;
-  }
+  useEffect(() => {
+    if (auth.isAuthenticated && !auth.isLoading) {
+      router.push('/home');
+    }
+  }, [auth.isAuthenticated, auth.isLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
