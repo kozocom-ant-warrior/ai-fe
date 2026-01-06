@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../providers/AuthProvider';
+import Header from '../components/Header';
 import CvFilesTable from './components/CvFilesTable';
 import UploadCvSection from './components/UploadCvSection';
 import JdInputSection from './components/JdInputSection';
 import CvMappingsTable from './components/CvMappingsTable';
-import { CvFileFromBackend } from '../api/files';
+import { CvFileFromBackend, fetchFiles } from '../api/files';
 import type { CvMapping } from '../types/cv.types';
 
 export default function Home() {
@@ -15,8 +16,28 @@ export default function Home() {
   const [cvFilesFromBackend, setCvFilesFromBackend] = useState<CvFileFromBackend[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [cvMappings, setCvMappings] = useState<CvMapping[]>([]);
+  const [maxCvCount, setMaxCvCount] = useState<number>(5);
   const router = useRouter();
   const auth = useAuth();
+
+  // Load CV files from backend
+  useEffect(() => {
+    const loadCvFiles = async () => {
+      try {
+        const files = await fetchFiles();
+        setCvFilesFromBackend(files);
+      } catch (error) {
+        console.error('Error loading CV files:', error);
+      }
+    };
+    
+    if (auth.isAuthenticated) {
+      loadCvFiles();
+    }
+  }, [auth.isAuthenticated, refreshTrigger]);
+
+  // Calculate total CV count from backend
+  const totalCvCount = cvFilesFromBackend.length;
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -24,6 +45,13 @@ export default function Home() {
       router.push('/');
     }
   }, [auth.isAuthenticated, auth.isLoading, router]);
+
+  // Ensure maxCvCount doesn't exceed totalCvCount
+  useEffect(() => {
+    if (totalCvCount > 0 && maxCvCount > totalCvCount) {
+      setMaxCvCount(totalCvCount);
+    }
+  }, [totalCvCount, maxCvCount]);
 
   const handleCvUpload = (files: File[]) => {
     setCvFiles(prev => [...prev, ...files]);
@@ -40,8 +68,12 @@ export default function Home() {
     setCvFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleLogout = async () => {
-    await auth.logout();
+  const handleRemoveBackendFile = (id: string) => {
+    setCvFilesFromBackend(prev => prev.filter(f => f.id !== id));
+  };
+
+  const handleThinkingSuccess = (mappings: CvMapping[]) => {
+    setCvMappings(mappings);
   };
 
   // Show loading if checking authentication
@@ -60,37 +92,10 @@ export default function Home() {
     return null;
   }
 
-  const handleRemoveBackendFile = (id: string) => {
-    setCvFilesFromBackend(prev => prev.filter(f => f.id !== id));
-  };
-
-  const handleThinkingSuccess = (mappings: CvMapping[]) => {
-    setCvMappings(mappings);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">Hire Graph</h1>
-            <div className="flex items-center gap-4">
-              {auth.user?.email && (
-                <span className="text-sm text-gray-600">
-                  {auth.user.email}
-                </span>
-              )}
-              <button
-                onClick={handleLogout}
-                className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 transition"
-              >
-                Đăng xuất
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8 py-8">
@@ -122,7 +127,12 @@ export default function Home() {
           </div>
 
           {/* Column 2: JD Input & Response Requirement */}
-          <JdInputSection onThinkingSuccess={handleThinkingSuccess} />
+          <JdInputSection 
+            onThinkingSuccess={handleThinkingSuccess} 
+            maxCvCount={maxCvCount}
+            onMaxCvCountChange={setMaxCvCount}
+            totalCvCount={totalCvCount}
+          />
         </div>
       </main>
     </div>

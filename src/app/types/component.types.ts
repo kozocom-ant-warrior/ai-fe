@@ -46,6 +46,9 @@ export interface CvFilesTableProps {
 
 export interface JdInputSectionProps {
   onThinkingSuccess?: (cvMappings: CvMapping[]) => void;
+  maxCvCount?: number;
+  onMaxCvCountChange?: (count: number) => void;
+  totalCvCount?: number;
 }
 
 export interface AdvancedOptionsProps {

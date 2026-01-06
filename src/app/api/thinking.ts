@@ -57,6 +57,11 @@ export async function sendThinkingRequest(
     // Add advanced options
     formData.append('advanced_options', JSON.stringify(requestData.advancedOptions));
 
+    // Add max CV count if provided
+    if (requestData.maxCvCount !== undefined) {
+      formData.append('max_cv_count', requestData.maxCvCount.toString());
+    }
+
     // Send request
     const { data } = await apiClient.post('/thinking', formData, {
       headers: {

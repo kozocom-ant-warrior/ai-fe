@@ -5,6 +5,7 @@ export interface ThinkingRequest {
   jdText?: string;
   jdFiles?: File[];
   advancedOptions: AdvancedOptionsState;
+  maxCvCount?: number;
 }
 
 export interface ThinkingResponse {
