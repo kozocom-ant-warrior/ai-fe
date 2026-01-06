@@ -14,7 +14,7 @@ export default function Login() {
   const auth = useAuth();
   const router = useRouter();
 
-  // Redirect to home nếu đã authenticated
+  // Redirect to home if already authenticated
   useEffect(() => {
     if (auth.isAuthenticated && !auth.isLoading) {
       router.push('/home');
@@ -32,7 +32,7 @@ export default function Login() {
     setIsSubmitting(true);
     try {
       await auth.login(email, password);
-      // Nếu không có challenge, sẽ tự động redirect
+      // If no challenge, will automatically redirect
       if (!auth.requiresNewPassword) {
         toast.success('Đăng nhập thành công!');
       }
@@ -82,7 +82,7 @@ export default function Login() {
     );
   }
 
-  // Hiển thị form nhập mật khẩu mới nếu có challenge
+  // Show new password form if there is a challenge
   if (auth.requiresNewPassword) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">

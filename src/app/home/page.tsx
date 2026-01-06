@@ -18,7 +18,7 @@ export default function Home() {
   const router = useRouter();
   const auth = useAuth();
 
-  // Redirect to login nếu chưa authenticated
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!auth.isLoading && !auth.isAuthenticated) {
       router.push('/');
@@ -30,9 +30,9 @@ export default function Home() {
   };
 
   const handleUploadSuccess = () => {
-    // Trigger refresh trong CvFilesTable
+    // Trigger refresh in CvFilesTable
     setRefreshTrigger(prev => prev + 1);
-    // Clear local files sau khi upload thành công
+    // Clear local files after successful upload
     setCvFiles([]);
   };
 
@@ -44,7 +44,7 @@ export default function Home() {
     await auth.logout();
   };
 
-  // Hiển thị loading nếu đang check authentication
+  // Show loading if checking authentication
   if (auth.isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -55,7 +55,7 @@ export default function Home() {
     );
   }
 
-  // Hiển thị nothing nếu chưa authenticated (sẽ redirect)
+  // Show nothing if not authenticated (will redirect)
   if (!auth.isAuthenticated) {
     return null;
   }
@@ -94,7 +94,7 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8 py-8">
-        {/* CV Mappings Table - Full width phía trên */}
+        {/* CV Mappings Table - Full width at the top */}
         {cvMappings.length > 0 && (
           <div className="mb-6">
             <CvMappingsTable cvMappings={cvMappings} />

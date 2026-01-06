@@ -41,7 +41,7 @@ export interface CvFilesTableProps {
   onRemoveBackendFile: (id: string) => void;
   onRemoveNewFile: (index: number) => void;
   itemsPerPage?: number;
-  refreshTrigger?: number; // Trigger để refresh data khi upload thành công
+  refreshTrigger?: number; // Trigger to refresh data when upload succeeds
 }
 
 export interface JdInputSectionProps {

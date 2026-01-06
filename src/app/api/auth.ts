@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-// Axios instance với base URL từ biến môi trường
+// Axios instance with base URL from environment variable
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 
-// Thêm interceptor để tự động thêm access token vào header
+// Add interceptor to automatically add access token to header
 apiClient.interceptors.request.use((config) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
   if (token) {
@@ -14,12 +14,12 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Thêm interceptor để xử lý lỗi 401 (Unauthorized)
+// Add interceptor to handle 401 (Unauthorized) errors
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token hết hạn hoặc không hợp lệ, xóa token và redirect về login
+      // Token expired or invalid, remove token and redirect to login
       if (typeof window !== 'undefined') {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
@@ -35,9 +35,9 @@ import type { LoginRequest, LoginResponse, UserInfo } from '../types/auth.types'
 export type { LoginRequest, LoginResponse, UserInfo };
 
 /**
- * Đăng nhập với username và password
- * @param credentials Username và password
- * @returns Promise<LoginResponse> Response từ API
+ * Login with username and password
+ * @param credentials Username and password
+ * @returns Promise<LoginResponse> Response from API
  */
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   try {
@@ -56,7 +56,7 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
 }
 
 /**
- * Đăng xuất
+ * Logout
  * @returns Promise<void>
  */
 export async function logout(): Promise<void> {
@@ -64,12 +64,12 @@ export async function logout(): Promise<void> {
     await apiClient.post('/auth/logout');
   } catch (err: any) {
     console.error('Error logging out:', err);
-    // Không throw error vì logout có thể thành công ngay cả khi API fail
+    // Don't throw error because logout can succeed even if API fails
   }
 }
 
 /**
- * Lấy thông tin user hiện tại
+ * Get current user information
  * @returns Promise<UserInfo>
  */
 export async function getCurrentUser(): Promise<UserInfo> {

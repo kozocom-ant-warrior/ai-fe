@@ -12,6 +12,5 @@ export interface AdvancedOptionsState {
 export interface FormErrors {
   jdText?: string;
   jdFiles?: string;
-  responseRequirement?: string;
 }
 

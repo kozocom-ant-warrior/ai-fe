@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [requiresNewPassword, setRequiresNewPassword] = useState(false);
   const router = useRouter();
 
-  // Kiểm tra xem user đã đăng nhập chưa
+  // Check if user is logged in
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setAccessToken(session.tokens.accessToken?.toString() || null);
         }
       } catch (err) {
-        // User chưa đăng nhập hoặc session đã hết hạn
+        // User not logged in or session expired
         setUser(null);
         setAccessToken(null);
       } finally {
@@ -53,19 +53,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       setError(null);
       
-      // Gọi signIn
+      // Call signIn
       const signInResult = await signIn({ username: email, password });
       
-      // Kiểm tra nếu có challenge
+      // Check if there is a challenge
       if (signInResult.nextStep?.signInStep === 'CONFIRM_SIGN_IN_WITH_NEW_PASSWORD_REQUIRED') {
-        // Có challenge NEW_PASSWORD_REQUIRED
-        // Set flag để hiển thị form nhập mật khẩu mới
+        // There is NEW_PASSWORD_REQUIRED challenge
+        // Set flag to show new password form
         setRequiresNewPassword(true);
         setIsLoading(false);
-        return; // Không throw error, để UI hiển thị form
+        return; // Don't throw error, let UI show form
       }
       
-      // Nếu đăng nhập thành công (isSignedIn = true)
+      // If login successful (isSignedIn = true)
       if (signInResult.isSignedIn) {
         const currentUser = await getCurrentUser();
         const session = await fetchAuthSession();
@@ -83,14 +83,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
       
-      // Sau khi signIn, luôn thử lấy session và user
-      // Vì ngay cả khi có challenge, vẫn có thể đã có session token
+      // After signIn, always try to get session and user
+      // Because even with challenge, there might already be a session token
       try {
         const currentUser = await getCurrentUser();
         const session = await fetchAuthSession();
         
         if (session.tokens) {
-          // Có session token, coi như đăng nhập thành công
+          // Has session token, consider login successful
           const userInfo: UserInfo = {
             email: currentUser.signInDetails?.loginId || email,
             username: currentUser.username,
@@ -102,21 +102,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
       } catch (sessionErr) {
-        // Không lấy được session
+        // Could not get session
         console.log('Could not get session after signIn:', sessionErr);
       }
       
-      // Nếu không lấy được session, throw error
+      // If could not get session, throw error
       throw new Error('Đăng nhập thất bại. Vui lòng thử lại.');
     } catch (err: any) {
-      // Luôn thử lấy session khi có lỗi
-      // Vì ngay cả khi có challenge NEW_PASSWORD_REQUIRED, vẫn có thể có session token
+      // Always try to get session when there is an error
+      // Because even with NEW_PASSWORD_REQUIRED challenge, there might be a session token
       try {
         const currentUser = await getCurrentUser();
         const session = await fetchAuthSession();
         
         if (session.tokens) {
-          // Có session token, coi như đăng nhập thành công
+          // Has session token, consider login successful
           const userInfo: UserInfo = {
             email: currentUser.signInDetails?.loginId || email,
             username: currentUser.username,
@@ -128,7 +128,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
         
-        // Nếu có user nhưng không có token, vẫn thử cho phép đăng nhập
+        // If there is user but no token, still try to allow login
         if (currentUser) {
           const userInfo: UserInfo = {
             email: currentUser.signInDetails?.loginId || email,
@@ -136,7 +136,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           };
           
           setUser(userInfo);
-          // Thử lấy token một lần nữa sau một chút thời gian
+          // Try to get token again after a short time
           setTimeout(async () => {
             try {
               const retrySession = await fetchAuthSession();
@@ -152,11 +152,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
       } catch (sessionErr) {
-        // Không lấy được session hoặc user
+        // Could not get session or user
         console.log('Could not get session/user after error:', sessionErr);
       }
       
-      // Kiểm tra xem có phải là challenge NEW_PASSWORD_REQUIRED không
+      // Check if it is NEW_PASSWORD_REQUIRED challenge
       const errorMessage = err.message || '';
       const errorString = JSON.stringify(err).toLowerCase();
       
@@ -164,10 +164,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           errorString.includes('new_password_required') ||
           errorString.includes('challengename') ||
           errorString.includes('challenge')) {
-        // Có challenge NEW_PASSWORD_REQUIRED
+        // There is NEW_PASSWORD_REQUIRED challenge
         setRequiresNewPassword(true);
         setIsLoading(false);
-        return; // Không throw error, để UI hiển thị form
+        return; // Don't throw error, let UI show form
       }
       
       const finalErrorMessage = errorMessage || 'Có lỗi xảy ra khi đăng nhập';
@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error('Error during logout:', err);
     } finally {
-      // Xóa user info và token
+      // Clear user info and token
       setUser(null);
       setAccessToken(null);
       setIsLoading(false);
@@ -200,15 +200,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       setError(null);
       
-      // Gọi confirmSignIn với mật khẩu mới
-      // Trong Amplify v6, challengeResponse là object với NEW_PASSWORD
+      // Call confirmSignIn with new password
+      // In Amplify v6, challengeResponse is an object with NEW_PASSWORD
       const result = await confirmSignIn({ 
         challengeResponse: newPassword 
       });
       
-      // Kiểm tra kết quả
+      // Check result
       if (result.isSignedIn) {
-        // Đã xác nhận thành công, lấy thông tin user và token
+        // Confirmed successfully, get user info and token
         const currentUser = await getCurrentUser();
         const session = await fetchAuthSession();
         
@@ -224,7 +224,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Redirect to home
         router.push('/home');
       } else if (result.nextStep) {
-        // Có thể vẫn còn challenge khác
+        // There might still be other challenges
         throw new Error('Vui lòng hoàn tất các bước xác thực');
       } else {
         throw new Error('Xác nhận mật khẩu mới thất bại');

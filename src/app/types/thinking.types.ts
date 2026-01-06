@@ -4,7 +4,6 @@ import type { AdvancedOptionsState } from './form.types';
 export interface ThinkingRequest {
   jdText?: string;
   jdFiles?: File[];
-  responseRequirement: string;
   advancedOptions: AdvancedOptionsState;
 }
 

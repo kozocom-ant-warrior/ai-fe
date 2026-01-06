@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { getAccessToken } from './authHelper';
 
-// Axios instance với base URL từ biến môi trường
+// Axios instance with base URL from environment variable
 const apiClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
 
-// Thêm interceptor để tự động thêm access token vào header
+// Add interceptor to automatically add access token to header
 apiClient.interceptors.request.use(async (config) => {
   const token = await getAccessToken();
   if (token) {
@@ -15,12 +15,12 @@ apiClient.interceptors.request.use(async (config) => {
   return config;
 });
 
-// Thêm interceptor để xử lý lỗi 401 (Unauthorized)
+// Add interceptor to handle 401 (Unauthorized) errors
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token hết hạn hoặc không hợp lệ, redirect về login
+      // Token expired or invalid, redirect to login
       if (typeof window !== 'undefined') {
         window.location.href = '/';
       }
@@ -34,17 +34,17 @@ import type { ApiFileResponse, CvFileFromBackend } from '../types/file.types';
 export type { ApiFileResponse, CvFileFromBackend };
 
 /**
- * Lấy danh sách tất cả files từ API
- * @returns Promise<CvFileFromBackend[]> Danh sách files đã được transform
+ * Get list of all files from API
+ * @returns Promise<CvFileFromBackend[]> List of transformed files
  */
 export async function fetchFiles(): Promise<CvFileFromBackend[]> {
   try {
     const { data: responseData } = await apiClient.get('/files');
     
-    // Log response để debug
+    // Log response for debugging
     console.log('API response:', responseData);
     
-    // Kiểm tra xem response có phải là array không
+    // Check if response is an array
     let data: ApiFileResponse[] = [];
     
     if (responseData && typeof responseData === 'object') {
@@ -53,7 +53,7 @@ export async function fetchFiles(): Promise<CvFileFromBackend[]> {
       data = [];
     }
     
-    // Transform API response thành format CvFileFromBackend
+    // Transform API response to CvFileFromBackend format
     const transformedFiles: CvFileFromBackend[] = data.map((file) => ({
       id: file.id.toString(),
       name: file.original_filename || file.filename,
@@ -70,8 +70,8 @@ export async function fetchFiles(): Promise<CvFileFromBackend[]> {
 }
 
 /**
- * Xóa một file theo ID
- * @param id ID của file cần xóa
+ * Delete a file by ID
+ * @param id ID of the file to delete
  * @returns Promise<void>
  */
 export async function deleteFile(id: string): Promise<void> {

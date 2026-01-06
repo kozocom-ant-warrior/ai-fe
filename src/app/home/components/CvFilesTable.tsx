@@ -24,7 +24,7 @@ export default function CvFilesTable({
   const [isDeleting, setIsDeleting] = useState(false);
   const [tableOpacity, setTableOpacity] = useState(1);
 
-  // Fetch data từ API
+  // Fetch data from API
   const loadFiles = async (isRefresh = false) => {
     if (isRefresh) {
       setIsRefreshing(true);
@@ -37,12 +37,12 @@ export default function CvFilesTable({
     try {
       const transformedFiles = await fetchFiles();
       
-      // Fade in animation sau khi load xong
+      // Fade in animation after loading completes
       if (isRefresh) {
-        // Đợi một chút để animation fade out hoàn tất
+        // Wait a bit for fade out animation to complete
         await new Promise(resolve => setTimeout(resolve, 150));
         setCvFilesFromBackend(transformedFiles);
-        // Fade in lại
+        // Fade in again
         setTimeout(() => {
           setTableOpacity(1);
         }, 50);
@@ -71,26 +71,26 @@ export default function CvFilesTable({
     loadFiles();
   }, []);
 
-  // Refresh khi refreshTrigger thay đổi (sau khi upload thành công)
+  // Refresh when refreshTrigger changes (after successful upload)
   useEffect(() => {
     if (refreshTrigger !== undefined && refreshTrigger > 0) {
       loadFiles(true);
     }
   }, [refreshTrigger]);
 
-  // Tính toán phân trang
+  // Calculate pagination
   const totalCvFiles = cvFilesFromBackend.length + cvFiles.length;
   const totalPages = Math.ceil(totalCvFiles / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  // Kết hợp CV từ backend và CV mới upload, sau đó slice theo trang
-  // File mới upload sẽ hiển thị ở đầu (đảo ngược cvFiles để file mới nhất lên đầu)
+  // Combine CV from backend and newly uploaded CV, then slice by page
+  // Newly uploaded files will be displayed at the top (reverse cvFiles so newest file is first)
   const newFiles = cvFiles.map((file, index) => ({ 
     type: 'new' as const, 
     data: file, 
     index 
-  })).reverse(); // Đảo ngược để file mới nhất lên đầu
+  })).reverse(); // Reverse so newest file is first
   
   const allCvFiles = [
     ...newFiles,
@@ -98,26 +98,26 @@ export default function CvFilesTable({
   ];
   const paginatedCvFiles = allCvFiles.slice(startIndex, endIndex);
 
-  // Reset về trang cuối khi xóa file
+  // Reset to last page when deleting file
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
       setCurrentPage(totalPages);
     }
   }, [totalPages, currentPage]);
 
-  // Mở popup confirm xóa file
+  // Open confirm delete file popup
   const handleRemoveBackendFileClick = (id: string, name: string) => {
     setFileToDelete({ id, name });
   };
 
-  // Xác nhận xóa file
+  // Confirm delete file
   const confirmDelete = async () => {
     if (!fileToDelete) return;
 
     const { id } = fileToDelete;
     setIsDeleting(true);
     
-    // Optimistic update - xóa file khỏi UI ngay lập tức
+    // Optimistic update - remove file from UI immediately
     const originalFiles = [...cvFilesFromBackend];
     setCvFilesFromBackend(prev => prev.filter(f => f.id.toString() !== id));
     onRemoveBackendFile(id);
@@ -126,14 +126,14 @@ export default function CvFilesTable({
     try {
       await deleteFile(id);
       
-      // Hiển thị thông báo thành công bằng toast
+      // Show success notification with toast
       const fileName = fileToDelete.name;
       toast.success(`Đã xóa file "${fileName}" thành công.`);
       
-      // Refresh danh sách file sau khi xóa thành công
+      // Refresh file list after successful deletion
       await loadFiles(true);
     } catch (err) {
-      // Revert optimistic update nếu có lỗi
+      // Revert optimistic update if there is an error
       setCvFilesFromBackend(originalFiles);
       const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi xóa file';
       setError(errorMessage);
@@ -144,7 +144,7 @@ export default function CvFilesTable({
     }
   };
 
-  // Hủy xóa file
+  // Cancel file deletion
   const cancelDelete = () => {
     setFileToDelete(null);
   };
@@ -199,7 +199,7 @@ export default function CvFilesTable({
 
   return (
     <div className="mb-6">
-      {/* Tổng số CV */}
+      {/* Total CV count */}
       <div className="mb-3 flex items-center justify-between">
         <p className="text-sm text-gray-700">
           Tổng số CV: <span className="font-semibold">{totalCvFiles}</span>
@@ -373,7 +373,7 @@ export default function CvFilesTable({
                     <td className="px-3 py-2 whitespace-nowrap text-center">
                       <button
                         onClick={() => {
-                          // Tìm index chính xác trong cvFiles gốc
+                          // Find exact index in original cvFiles
                           const actualIndex = cvFiles.findIndex(f => f.name === file.name && f.size === file.size);
                           if (actualIndex !== -1) {
                             onRemoveNewFile(actualIndex);
@@ -423,7 +423,7 @@ export default function CvFilesTable({
             </button>
             <div className="flex items-center space-x-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                // Hiển thị tối đa 5 số trang
+                // Display maximum 5 page numbers
                 if (
                   page === 1 ||
                   page === totalPages ||
