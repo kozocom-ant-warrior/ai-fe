@@ -1,0 +1,212 @@
+# Cursor & Copilot Instructions for AI-FE Project
+
+## Project Overview
+This is a Next.js 16 application for CV semantic search, helping recruiters find suitable candidates for job descriptions. The project uses TypeScript, Tailwind CSS, AWS Amplify (Cognito) for authentication, and follows the App Router pattern.
+
+## Technology Stack
+- **Framework**: Next.js 16.0.10 (App Router)
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 4
+- **Authentication**: AWS Amplify 6.15.9 with Cognito
+- **Validation**: Zod 4.2.1
+- **HTTP Client**: Axios 1.13.2
+- **UI Libraries**: React Select, React Hot Toast
+- **React**: 19.2.1
+
+## Project Structure
+
+### Key Directories
+- `src/app/` - Next.js App Router pages and routes
+  - `api/` - API service functions (auth.ts, files.ts, thinking.ts)
+  - `components/` - Shared React components (Button, Header, ConfirmDialog)
+  - `home/` - Home page and its components
+    - `components/` - Home-specific components (CvFilesTable, CvMappingsTable, etc.)
+    - `hooks/` - Custom React hooks (useCvFilesTable)
+  - `providers/` - Context providers (AuthProvider)
+  - `schemas/` - Zod validation schemas
+  - `types/` - TypeScript type definitions (centralized exports in index.ts)
+- `src/configs/` - Configuration files (amplify.ts, env.ts)
+- `public/` - Static assets
+
+### File Naming Conventions
+- Components: PascalCase (e.g., `CvFilesTable.tsx`)
+- Hooks: camelCase with "use" prefix (e.g., `useCvFilesTable.ts`)
+- Types: camelCase with ".types.ts" suffix (e.g., `cv.types.ts`)
+- API services: camelCase (e.g., `auth.ts`, `files.ts`)
+- Schemas: camelCase with "Schema" suffix (e.g., `jdInputSchema.ts`)
+
+## Code Style Guidelines
+
+### TypeScript
+- Use strict TypeScript mode (enabled in tsconfig.json)
+- Always define types for props, state, and function parameters
+- Export types from `src/app/types/index.ts` for centralized access
+- Use interfaces for object shapes, types for unions/intersections
+- Prefer explicit return types for functions
+
+### React Components
+- Use functional components with hooks
+- Mark client components with `'use client'` directive at the top
+- Use TypeScript interfaces for component props
+- Extract complex logic into custom hooks
+- Keep components focused and single-responsibility
+
+### State Management
+- Use React hooks (useState, useEffect) for local state
+- Use Context API (AuthProvider) for global authentication state
+- Avoid prop drilling - use context or lift state appropriately
+
+### API Integration
+- All API calls should go through service functions in `src/app/api/`
+- Use Axios for HTTP requests
+- API base URL is configured in `src/configs/env.ts`
+- Handle errors gracefully with try-catch blocks
+- Show user feedback with React Hot Toast
+
+### Styling
+- Use Tailwind CSS utility classes exclusively
+- Follow responsive design patterns (mobile-first)
+- Use consistent spacing and color schemes
+- Common patterns:
+  - `bg-white rounded-lg shadow-sm p-6` for cards
+  - `text-gray-900` for headings, `text-gray-700` for body text
+  - `flex items-center justify-center` for centering
+
+### Authentication
+- Authentication is handled via AWS Cognito through Amplify
+- Use `useAuth()` hook from AuthProvider to access auth state
+- Protect routes by checking `auth.isAuthenticated`
+- Redirect unauthenticated users to login page
+
+## Common Patterns
+
+### Component Structure
+```typescript
+'use client';
+
+import { useState, useEffect } from 'react';
+import type { ComponentProps } from '../types';
+
+interface Props {
+  // Define props
+}
+
+export default function ComponentName({ prop1, prop2 }: Props) {
+  // State and hooks
+  // Effects
+  // Handlers
+  // Render
+}
+```
+
+### API Service Pattern
+```typescript
+import axios from 'axios';
+import { envConfig } from '@/configs/env';
+
+export interface ApiResponse {
+  // Define response type
+}
+
+export async function fetchData(): Promise<ApiResponse[]> {
+  try {
+    const response = await axios.get(`${envConfig.apiBaseUrl}/endpoint`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    throw error;
+  }
+}
+```
+
+### Form Validation
+- Use Zod schemas from `src/app/schemas/`
+- Validate on submit, show errors clearly
+- Use controlled components for form inputs
+
+## Important Notes
+
+### Environment Variables
+- All environment variables must be prefixed with `NEXT_PUBLIC_` for client-side access
+- Configuration is centralized in `src/configs/env.ts`
+- Required variables:
+  - `NEXT_PUBLIC_USER_POOL_ID`
+  - `NEXT_PUBLIC_CLIENT_ID`
+  - `NEXT_PUBLIC_REGION`
+  - `NEXT_PUBLIC_API_BASE_URL`
+
+### Mock Data
+- Mock data is available in `src/app/data/mockCvMappings.ts`
+- Use `USE_MOCK_DATA` flag in components to toggle between mock and real API
+- Remove mock data usage before production
+
+### File Upload
+- CV files are uploaded through `UploadCvSection` component
+- Files are managed in `CvFilesTable` component
+- Backend files are fetched via `fetchFiles()` from `src/app/api/files.ts`
+
+### CV Mappings
+- CV mappings represent the semantic search results
+- Displayed in `CvMappingsTable` component
+- Generated via thinking API endpoint
+
+## Development Guidelines
+
+### Adding New Features
+1. Create types in appropriate `*.types.ts` file
+2. Export types from `src/app/types/index.ts`
+3. Create components in appropriate directory
+4. Add API services in `src/app/api/` if needed
+5. Use existing patterns and conventions
+
+### Code Quality
+- Run `npm run lint` before committing
+- Ensure TypeScript compiles without errors
+- Test components in development mode
+- Follow existing code patterns
+
+### Dependencies
+- Always check package.json before adding new dependencies
+- Prefer existing dependencies when possible
+- Use TypeScript-compatible packages
+- Update types if needed
+
+## Common Tasks
+
+### Adding a New Component
+1. Create file in appropriate directory
+2. Define TypeScript interface for props
+3. Use Tailwind CSS for styling
+4. Export as default if it's a page component
+5. Import and use in parent component
+
+### Adding API Integration
+1. Create service function in `src/app/api/`
+2. Define TypeScript types for request/response
+3. Use `envConfig.apiBaseUrl` for base URL
+4. Handle errors appropriately
+5. Show user feedback with toast notifications
+
+### Adding New Types
+1. Add to appropriate `*.types.ts` file
+2. Export from `src/app/types/index.ts`
+3. Use throughout the codebase for consistency
+
+## Testing Considerations
+- Components should handle loading and error states
+- API calls should have proper error handling
+- Authentication checks should be in place
+- Responsive design should work on mobile and desktop
+
+## Performance
+- Use Next.js Image component for images
+- Lazy load components when appropriate
+- Optimize API calls (avoid unnecessary requests)
+- Use React.memo for expensive components if needed
+
+## Security
+- Never expose API keys or secrets in client-side code
+- Validate all user inputs with Zod schemas
+- Use environment variables for sensitive configuration
+- Ensure authentication is checked before API calls
+
