@@ -9,7 +9,11 @@ import UploadCvSection from './components/UploadCvSection';
 import JdInputSection from './components/JdInputSection';
 import CvMappingsTable from './components/CvMappingsTable';
 import { CvFileFromBackend, fetchFiles } from '../api/files';
+import { mockCvMappings } from '../data/mockCvMappings';
 import type { CvMapping } from '../types/cv.types';
+
+// Set to true to use mock data instead of API
+const USE_MOCK_DATA = false;
 
 export default function Home() {
   const [cvFiles, setCvFiles] = useState<File[]>([]);
@@ -19,6 +23,13 @@ export default function Home() {
   const [maxCvCount, setMaxCvCount] = useState<number>(5);
   const router = useRouter();
   const auth = useAuth();
+
+  // Load mock data on mount if enabled
+  useEffect(() => {
+    if (USE_MOCK_DATA) {
+      setCvMappings(mockCvMappings);
+    }
+  }, []);
 
   // Load CV files from backend
   useEffect(() => {
@@ -73,7 +84,10 @@ export default function Home() {
   };
 
   const handleThinkingSuccess = (mappings: CvMapping[]) => {
-    setCvMappings(mappings);
+    // Only update if not using mock data, or allow override
+    if (!USE_MOCK_DATA || mappings.length > 0) {
+      setCvMappings(mappings);
+    }
   };
 
   // Show loading if checking authentication

@@ -1,12 +1,83 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import type { CvMapping, CvMappingsTableProps } from '../../types/cv.types';
 import { envConfig } from '@/configs/env';
+import SkillFilterSelect, { type SkillOption } from './SkillFilterSelect';
 
 // Get CV view base URL from environment config
 const CV_VIEW_BASE_URL = envConfig.apiBaseUrl;
 
 export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
+  const [expandedMatched, setExpandedMatched] = useState<Set<string>>(new Set());
+  const [expandedMissing, setExpandedMissing] = useState<Set<string>>(new Set());
+  const [selectedSkills, setSelectedSkills] = useState<SkillOption[]>([]);
+  const [appliedSkills, setAppliedSkills] = useState<string[]>([]);
+
+  // Collect all unique skills from all CVs
+  const allSkills = useMemo(() => {
+    const skillsSet = new Set<string>();
+    cvMappings.forEach((cv) => {
+      cv.skills.forEach((skill) => {
+        skillsSet.add(skill);
+      });
+    });
+    return Array.from(skillsSet).sort().map((skill) => ({
+      value: skill,
+      label: skill,
+    }));
+  }, [cvMappings]);
+
+  // Filter CVs based on applied skills
+  const filteredCvMappings = useMemo(() => {
+    if (appliedSkills.length === 0) {
+      return cvMappings;
+    }
+    return cvMappings.filter((cv) => {
+      return appliedSkills.some((skill) => cv.skills.includes(skill));
+    });
+  }, [cvMappings, appliedSkills]);
+
+  const handleSearch = () => {
+    setAppliedSkills(selectedSkills.map((option) => option.value));
+  };
+
+  const handleClearFilter = () => {
+    setSelectedSkills([]);
+    setAppliedSkills([]);
+  };
+
+  const handleSkillsChange = (newSelected: SkillOption[]) => {
+    setSelectedSkills(newSelected);
+    // Nếu xóa hết thì cũng xóa bộ lọc đã áp dụng
+    if (newSelected.length === 0) {
+      setAppliedSkills([]);
+    }
+  };
+
+  const toggleMatched = (cvId: string) => {
+    setExpandedMatched((prev) => {
+      const next = new Set(prev);
+      if (next.has(cvId)) {
+        next.delete(cvId);
+      } else {
+        next.add(cvId);
+      }
+      return next;
+    });
+  };
+
+  const toggleMissing = (cvId: string) => {
+    setExpandedMissing((prev) => {
+      const next = new Set(prev);
+      if (next.has(cvId)) {
+        next.delete(cvId);
+      } else {
+        next.add(cvId);
+      }
+      return next;
+    });
+  };
   const getScoreColor = (score: number) => {
     if (score >= 90) return 'text-green-600 bg-green-50';
     if (score >= 70) return 'text-blue-600 bg-blue-50';
@@ -16,9 +87,20 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">
-        Kết quả Matching CV ({cvMappings.length})
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold text-gray-900">
+          Kết quả Matching CV ({filteredCvMappings.length}/{cvMappings.length})
+        </h2>
+      </div>
+      
+      <SkillFilterSelect
+        allSkills={allSkills}
+        selectedSkills={selectedSkills}
+        onSkillsChange={handleSkillsChange}
+        onSearch={handleSearch}
+        appliedSkills={appliedSkills}
+        onClearFilter={handleClearFilter}
+      />
       
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
@@ -42,7 +124,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {cvMappings.map((cv) => (
+            {filteredCvMappings.map((cv) => (
               <tr key={cv.cv_id} className="hover:bg-gray-50">
                 <td className="px-4 py-4 whitespace-nowrap">
                   <div className="flex flex-col">
@@ -98,7 +180,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                 </td>
                 <td className="px-4 py-4">
                   <div className="flex flex-wrap gap-1 max-w-xs">
-                    {cv.skills.slice(0, 6).map((skill, index) => (
+                    {cv.skills.map((skill, index) => (
                       <span
                         key={index}
                         className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-indigo-100 text-indigo-800"
@@ -106,11 +188,6 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                         {skill}
                       </span>
                     ))}
-                    {cv.skills.length > 6 && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-600">
-                        +{cv.skills.length - 6}
-                      </span>
-                    )}
                   </div>
                 </td>
                 <td className="px-4 py-4 whitespace-nowrap">
@@ -139,31 +216,52 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                     <p className="mb-2">{cv.mapping_description}</p>
                     {cv.scope.matched_requirements.length > 0 && (
                       <div className="mt-2">
-                        <div className="text-xs font-medium text-gray-600 mb-1">
-                          Phù hợp:
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="text-xs font-medium text-gray-600">
+                            Phù hợp:
+                          </div>
+                          {cv.scope.matched_requirements.length > 3 && (
+                            <button
+                              onClick={() => toggleMatched(cv.cv_id)}
+                              className="text-xs text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                            >
+                              {expandedMatched.has(cv.cv_id) ? 'Thu gọn' : `Xem tất cả (${cv.scope.matched_requirements.length})`}
+                            </button>
+                          )}
                         </div>
                         <ul className="text-xs text-gray-500 space-y-1">
-                          {cv.scope.matched_requirements.slice(0, 3).map((req, idx) => (
+                          {(expandedMatched.has(cv.cv_id)
+                            ? cv.scope.matched_requirements
+                            : cv.scope.matched_requirements.slice(0, 3)
+                          ).map((req, idx) => (
                             <li key={idx} className="flex items-start">
                               <span className="text-green-500 mr-1">✓</span>
                               <span>{req}</span>
                             </li>
                           ))}
-                          {cv.scope.matched_requirements.length > 3 && (
-                            <li className="text-gray-400">
-                              +{cv.scope.matched_requirements.length - 3} yêu cầu khác
-                            </li>
-                          )}
                         </ul>
                       </div>
                     )}
                     {cv.scope.missing_requirements.length > 0 && (
                       <div className="mt-2">
-                        <div className="text-xs font-medium text-gray-600 mb-1">
-                          Thiếu:
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="text-xs font-medium text-gray-600">
+                            Thiếu:
+                          </div>
+                          {cv.scope.missing_requirements.length > 3 && (
+                            <button
+                              onClick={() => toggleMissing(cv.cv_id)}
+                              className="text-xs text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                            >
+                              {expandedMissing.has(cv.cv_id) ? 'Thu gọn' : `Xem tất cả (${cv.scope.missing_requirements.length})`}
+                            </button>
+                          )}
                         </div>
                         <ul className="text-xs text-gray-500 space-y-1">
-                          {cv.scope.missing_requirements.map((req, idx) => (
+                          {(expandedMissing.has(cv.cv_id)
+                            ? cv.scope.missing_requirements
+                            : cv.scope.missing_requirements.slice(0, 3)
+                          ).map((req, idx) => (
                             <li key={idx} className="flex items-start">
                               <span className="text-red-500 mr-1">✗</span>
                               <span>{req}</span>
