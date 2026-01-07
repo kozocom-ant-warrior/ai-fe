@@ -1,153 +1,38 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
 import ConfirmDialog from '../../components/ConfirmDialog';
-import { fetchFiles, deleteFile } from '../../api/files';
 import type { CvFileFromBackend } from '../../types/file.types';
 import type { CvFilesTableProps } from '../../types/component.types';
+import { useCvFilesTable } from '../hooks/useCvFilesTable';
 
-export default function CvFilesTable({
-  cvFilesFromBackend: cvFilesFromBackendProp,
-  cvFiles,
-  onRemoveBackendFile,
-  onRemoveNewFile,
-  itemsPerPage = 5,
-  refreshTrigger,
-}: CvFilesTableProps) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [cvFilesFromBackend, setCvFilesFromBackend] = useState<CvFileFromBackend[]>(cvFilesFromBackendProp || []);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [fileToDelete, setFileToDelete] = useState<{ id: string; name: string } | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [tableOpacity, setTableOpacity] = useState(1);
+export default function CvFilesTable(props: CvFilesTableProps) {
+  const {
+    currentPage,
+    setCurrentPage,
+    isLoading,
+    isRefreshing,
+    error,
+    fileToDelete,
+    isDeleting,
+    tableOpacity,
+    selectedBackendFiles,
+    selectedNewFiles,
+    totalCvFiles,
+    totalPages,
+    paginatedCvFiles,
+    handleRemoveBackendFileClick,
+    confirmDelete,
+    cancelDelete,
+    handleBackendFileSelect,
+    handleNewFileSelect,
+    handleSelectAll,
+    isAllSelected,
+    getSelectedCount,
+    handleClearSelection,
+    handleDeleteSelected,
+    handleRemoveNewFile,
+  } = useCvFilesTable(props);
 
-  // Fetch data from API
-  const loadFiles = async (isRefresh = false) => {
-    if (isRefresh) {
-      setIsRefreshing(true);
-      setTableOpacity(0.5);
-    } else {
-      setIsLoading(true);
-    }
-    setError(null);
-    
-    try {
-      const transformedFiles = await fetchFiles();
-      
-      // Fade in animation after loading completes
-      if (isRefresh) {
-        // Wait a bit for fade out animation to complete
-        await new Promise(resolve => setTimeout(resolve, 150));
-        setCvFilesFromBackend(transformedFiles);
-        // Fade in again
-        setTimeout(() => {
-          setTableOpacity(1);
-        }, 50);
-      } else {
-        setCvFilesFromBackend(transformedFiles);
-      }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi tải danh sách file';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      if (isRefresh) {
-        setTableOpacity(1);
-      }
-    } finally {
-      if (isRefresh) {
-        setTimeout(() => {
-          setIsRefreshing(false);
-        }, 300);
-      } else {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    loadFiles();
-  }, []);
-
-  // Refresh when refreshTrigger changes (after successful upload)
-  useEffect(() => {
-    if (refreshTrigger !== undefined && refreshTrigger > 0) {
-      loadFiles(true);
-    }
-  }, [refreshTrigger]);
-
-  // Calculate pagination
-  const totalCvFiles = cvFilesFromBackend.length + cvFiles.length;
-  const totalPages = Math.ceil(totalCvFiles / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-
-  // Combine CV from backend and newly uploaded CV, then slice by page
-  // Newly uploaded files will be displayed at the top (reverse cvFiles so newest file is first)
-  const newFiles = cvFiles.map((file, index) => ({ 
-    type: 'new' as const, 
-    data: file, 
-    index 
-  })).reverse(); // Reverse so newest file is first
-  
-  const allCvFiles = [
-    ...newFiles,
-    ...cvFilesFromBackend.map(file => ({ type: 'backend' as const, data: file }))
-  ];
-  const paginatedCvFiles = allCvFiles.slice(startIndex, endIndex);
-
-  // Reset to last page when deleting file
-  useEffect(() => {
-    if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(totalPages);
-    }
-  }, [totalPages, currentPage]);
-
-  // Open confirm delete file popup
-  const handleRemoveBackendFileClick = (id: string, name: string) => {
-    setFileToDelete({ id, name });
-  };
-
-  // Confirm delete file
-  const confirmDelete = async () => {
-    if (!fileToDelete) return;
-
-    const { id } = fileToDelete;
-    setIsDeleting(true);
-    
-    // Optimistic update - remove file from UI immediately
-    const originalFiles = [...cvFilesFromBackend];
-    setCvFilesFromBackend(prev => prev.filter(f => f.id.toString() !== id));
-    onRemoveBackendFile(id);
-    setFileToDelete(null);
-    
-    try {
-      await deleteFile(id);
-      
-      // Show success notification with toast
-      const fileName = fileToDelete.name;
-      toast.success(`Đã xóa file "${fileName}" thành công.`);
-      
-      // Refresh file list after successful deletion
-      await loadFiles(true);
-    } catch (err) {
-      // Revert optimistic update if there is an error
-      setCvFilesFromBackend(originalFiles);
-      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi xóa file';
-      setError(errorMessage);
-      toast.error(errorMessage);
-      console.error('Error deleting file:', err);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  // Cancel file deletion
-  const cancelDelete = () => {
-    setFileToDelete(null);
-  };
 
   if (isLoading) {
     return (
@@ -199,11 +84,32 @@ export default function CvFilesTable({
 
   return (
     <div className="mb-6">
-      {/* Total CV count */}
-      <div className="mb-3 flex items-center justify-between">
+      {/* Total CV count and Delete button */}
+      <div className="mb-3 flex items-center justify-between min-h-[32px]">
         <p className="text-sm text-gray-700">
           Tổng số CV: <span className="font-semibold">{totalCvFiles}</span>
+          {getSelectedCount() > 0 && (
+            <span className="ml-3 text-indigo-600">
+              (Đã chọn: {getSelectedCount()})
+            </span>
+          )}
         </p>
+        <div className="flex items-center space-x-2" style={{ visibility: getSelectedCount() > 0 ? 'visible' : 'hidden' }}>
+          <button
+            onClick={handleClearSelection}
+            disabled={isDeleting}
+            className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            Hủy
+          </button>
+          <button
+            onClick={handleDeleteSelected}
+            disabled={isDeleting}
+            className="px-3 py-1 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+          >
+            {isDeleting ? 'Đang xóa...' : `Xóa ${getSelectedCount()} file`}
+          </button>
+        </div>
       </div>
       
       <div className="overflow-x-auto relative">
@@ -243,7 +149,17 @@ export default function CvFilesTable({
           <table className="min-w-full divide-y divide-gray-200" style={{ tableLayout: 'fixed', width: '100%' }}>
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                <th className="px-3 py-2 text-center text-xs font-medium text-gray-700 uppercase tracking-wider" style={{ width: '40px' }}>
+                  <div className="flex items-center justify-center">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected()}
+                      onChange={(e) => handleSelectAll(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
+                    />
+                  </div>
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style={{ width: '240px' }}>
                   Tên file
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -261,15 +177,27 @@ export default function CvFilesTable({
             {paginatedCvFiles.map((item, rowIndex) => {
               if (item.type === 'backend') {
                 const file = item.data as CvFileFromBackend;
+                const fileId = file.id.toString();
+                const isSelected = selectedBackendFiles.has(fileId);
                 return (
                   <tr 
                     key={file.id} 
-                    className="hover:bg-gray-50 transition-all duration-300 animate-fade-in"
+                    className={`hover:bg-gray-50 transition-all duration-300 animate-fade-in ${isSelected ? 'bg-indigo-50' : ''}`}
                     style={{ 
                       animationDelay: `${rowIndex * 50}ms`,
                       animationFillMode: 'both'
                     }}
                   >
+                    <td className="px-3 py-2 whitespace-nowrap text-center">
+                      <div className="flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleBackendFileSelect(fileId)}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
+                        />
+                      </div>
+                    </td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <div className="flex items-center">
                         <svg
@@ -306,7 +234,7 @@ export default function CvFilesTable({
                       <button
                         onClick={() => handleRemoveBackendFileClick(file.id.toString(), file.name)}
                         disabled={isDeleting}
-                        className="text-red-600 hover:text-red-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="text-red-600 hover:text-red-800 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         title="Xóa file"
                       >
                         <svg
@@ -329,15 +257,26 @@ export default function CvFilesTable({
               } else {
                 const file = item.data as File;
                 const index = item.index!;
+                const isSelected = selectedNewFiles.has(index);
                 return (
                   <tr 
                     key={`new-${index}`} 
-                    className="hover:bg-gray-50 transition-all duration-300 animate-fade-in"
+                    className={`hover:bg-gray-50 transition-all duration-300 animate-fade-in ${isSelected ? 'bg-indigo-50' : ''}`}
                     style={{ 
                       animationDelay: `${rowIndex * 50}ms`,
                       animationFillMode: 'both'
                     }}
                   >
+                    <td className="px-3 py-2 whitespace-nowrap text-center">
+                      <div className="flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleNewFileSelect(index)}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
+                        />
+                      </div>
+                    </td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <div className="flex items-center">
                         <svg
@@ -372,14 +311,8 @@ export default function CvFilesTable({
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-center">
                       <button
-                        onClick={() => {
-                          // Find exact index in original cvFiles
-                          const actualIndex = cvFiles.findIndex(f => f.name === file.name && f.size === file.size);
-                          if (actualIndex !== -1) {
-                            onRemoveNewFile(actualIndex);
-                          }
-                        }}
-                        className="text-red-600 hover:text-red-800 transition"
+                        onClick={() => handleRemoveNewFile(file)}
+                        className="text-red-600 hover:text-red-800 transition cursor-pointer"
                         title="Xóa file"
                       >
                         <svg
@@ -463,8 +396,10 @@ export default function CvFilesTable({
       <ConfirmDialog
         isOpen={!!fileToDelete}
         title="Xác nhận xóa file"
-        message="Bạn có chắc chắn muốn xóa file này không?"
-        detailText={fileToDelete?.name}
+        message={fileToDelete?.id === 'multiple' 
+          ? `Bạn có chắc chắn muốn xóa ${getSelectedCount()} file đã chọn không?`
+          : "Bạn có chắc chắn muốn xóa file này không?"}
+        detailText={fileToDelete?.id === 'multiple' ? undefined : fileToDelete?.name}
         warningText="Hành động này không thể hoàn tác."
         confirmText="Xóa"
         cancelText="Hủy"

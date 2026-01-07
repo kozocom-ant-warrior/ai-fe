@@ -1,13 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { AdvancedOptionsState } from '../../types/form.types';
 import type { AdvancedOptionsProps } from '../../types/component.types';
 
 export type { AdvancedOptionsState };
 
 export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProps) {
-  const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<AdvancedOptionsState>({
     scoreMatching: false,
     detectDuplicate: false,
@@ -16,6 +15,10 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
     suggestOtherRoles: false,
     certBenefit: false,
   });
+
+  const allChecked = useMemo(() => {
+    return Object.values(options).every(value => value === true);
+  }, [options]);
 
   const handleOptionChange = (key: keyof AdvancedOptionsState) => {
     const newOptions = {
@@ -26,37 +29,38 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
     onOptionsChange?.(newOptions);
   };
 
+  const handleCheckAll = () => {
+    const newValue = !allChecked;
+    const newOptions: AdvancedOptionsState = {
+      scoreMatching: newValue,
+      detectDuplicate: newValue,
+      cvPresentation: newValue,
+      interviewQuestions: newValue,
+      suggestOtherRoles: newValue,
+      certBenefit: newValue,
+    };
+    setOptions(newOptions);
+    onOptionsChange?.(newOptions);
+  };
+
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between w-full text-left"
-      >
+      <div className="flex items-center justify-between mb-4">
         <span className="text-sm font-medium text-gray-700">Nâng cao</span>
-        <svg
-          className={`w-5 h-5 text-gray-500 transition-transform duration-300 ease-in-out ${
-            isOpen ? 'transform rotate-180' : ''
-          }`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
+        <label className="flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            checked={allChecked}
+            onChange={handleCheckAll}
+            className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
           />
-        </svg>
-      </button>
+          <span className="ml-2 text-sm font-medium text-gray-700">
+            Chọn tất cả
+          </span>
+        </label>
+      </div>
 
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-96 opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'
-        }`}
-      >
-        <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3">
           <label className="flex items-center cursor-pointer">
             <input
               type="checkbox"
@@ -117,7 +121,6 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
             </span>
           </label>
         </div>
-      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Button from '../../components/Button';
 import FileDropzone from './FileDropzone';
+import { envConfig } from '@/configs/env';
 import type { UploadCvSectionProps } from '../../types/component.types';
 import type { UploadResponse, FileListResponse } from '../../types/file.types';
 
@@ -30,7 +31,8 @@ export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvS
         formData.append('files', file);
       });
 
-      const response = await fetch('http://localhost:8000/cv/upload', {
+      const apiUrl = `${envConfig.apiBaseUrl}/cv/upload`;
+      const response = await fetch(apiUrl, {
         method: 'POST',
         body: formData,
       });
