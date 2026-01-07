@@ -107,7 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       // If could not get session, throw error
-      throw new Error('Đăng nhập thất bại. Vui lòng thử lại.');
+      throw new Error('Login failed. Please try again.');
     } catch (err: any) {
       // Always try to get session when there is an error
       // Because even with NEW_PASSWORD_REQUIRED challenge, there might be a session token
@@ -170,7 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return; // Don't throw error, let UI show form
       }
       
-      const finalErrorMessage = errorMessage || 'Có lỗi xảy ra khi đăng nhập';
+      const finalErrorMessage = errorMessage || 'An error occurred while logging in';
       setError(new Error(finalErrorMessage));
       throw err;
     } finally {
@@ -225,12 +225,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push('/home');
       } else if (result.nextStep) {
         // There might still be other challenges
-        throw new Error('Vui lòng hoàn tất các bước xác thực');
+        throw new Error('Please complete all authentication steps');
       } else {
-        throw new Error('Xác nhận mật khẩu mới thất bại');
+        throw new Error('Failed to confirm new password');
       }
     } catch (err: any) {
-      const errorMessage = err.message || 'Có lỗi xảy ra khi xác nhận mật khẩu mới';
+      const errorMessage = err.message || 'An error occurred while confirming new password';
       setError(new Error(errorMessage));
       throw err;
     } finally {

@@ -48,7 +48,7 @@ export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvS
       onUpload(selectedFiles);
       
       // Show success toast
-      toast.success(`Đã upload thành công ${data.total} file(s)`);
+      toast.success(`Successfully uploaded ${data.total} file(s)`);
       
       setSelectedFiles([]);
 
@@ -57,7 +57,7 @@ export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvS
         onUploadSuccess();
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra khi upload file';
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while uploading file';
       setUploadError(errorMessage);
       toast.error(errorMessage);
       console.error('Upload error:', error);
@@ -77,9 +77,9 @@ export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvS
         onFilesSelected={handleFilesSelected}
         files={selectedFiles}
         onRemoveFile={handleRemoveFile}
-        placeholderText="Kéo thả hoặc chọn file CV"
-        draggingText="Thả file vào đây"
-        fileTypesText="DOC, DOCX, PDF (MAX. 10MB mỗi file)"
+        placeholderText="Drag and drop or select CV file"
+        draggingText="Drop file here"
+        fileTypesText="DOC, DOCX, PDF (MAX. 10MB per file)"
         disabled={isUploading}
       />
 
@@ -96,7 +96,7 @@ export default function UploadCvSection({ onUpload, onUploadSuccess }: UploadCvS
         onClick={handleUpload}
         disabled={selectedFiles.length === 0}
         isLoading={isUploading}
-        loadingText="Đang upload..."
+        loadingText="Uploading..."
         fullWidth
         variant="primary"
       />

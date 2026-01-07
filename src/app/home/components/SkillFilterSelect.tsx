@@ -27,7 +27,7 @@ export default function SkillFilterSelect({
   return (
     <div className="mb-4">
       <label htmlFor="skill-filter" className="block text-sm font-medium text-gray-700 mb-2">
-        Lọc theo kỹ năng:
+        Filter by skills:
       </label>
       <div className="flex items-start gap-3">
         <div className="flex-1">
@@ -40,10 +40,10 @@ export default function SkillFilterSelect({
               const newSelected = (newValue as SkillOption[]) || [];
               onSkillsChange(newSelected);
             }}
-            placeholder="Chọn kỹ năng..."
+            placeholder="Select skills..."
             className="text-sm"
             classNamePrefix="select"
-            noOptionsMessage={() => 'Không tìm thấy kỹ năng'}
+            noOptionsMessage={() => 'No skills found'}
             styles={{
               control: (base) => ({
                 ...base,
@@ -96,19 +96,19 @@ export default function SkillFilterSelect({
           disabled={selectedSkills.length === 0}
           className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer text-sm font-medium transition-colors whitespace-nowrap"
         >
-          Tìm kiếm
+          Search
         </button>
       </div>
       {appliedSkills.length > 0 && (
         <div className="mt-2 flex items-center gap-3">
           <span className="text-xs text-gray-500">
-            Đang lọc: {appliedSkills.length} kỹ năng
+            Filtering: {appliedSkills.length} skill(s)
           </span>
           <button
             onClick={onClearFilter}
             className="text-xs text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
           >
-            Xóa bộ lọc
+            Clear filter
           </button>
         </div>
       )}

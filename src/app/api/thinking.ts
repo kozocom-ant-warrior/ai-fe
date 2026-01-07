@@ -76,7 +76,7 @@ export async function sendThinkingRequest(
   } catch (err: any) {
     console.error('Error sending thinking request:', err);
     throw new Error(
-      err.response?.data?.message || 'Có lỗi xảy ra khi gửi yêu cầu thinking'
+      err.response?.data?.message || 'An error occurred while sending thinking request'
     );
   }
 }

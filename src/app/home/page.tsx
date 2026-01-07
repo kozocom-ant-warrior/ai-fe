@@ -95,7 +95,7 @@ export default function Home() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="text-xl font-semibold text-gray-700">Đang tải...</div>
+          <div className="text-xl font-semibold text-gray-700">Loading...</div>
         </div>
       </div>
     );

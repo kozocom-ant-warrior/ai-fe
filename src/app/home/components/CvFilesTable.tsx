@@ -58,7 +58,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          <p className="text-sm text-gray-600">Đang tải danh sách file...</p>
+          <p className="text-sm text-gray-600">Loading file list...</p>
         </div>
       </div>
     );
@@ -72,7 +72,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
           onClick={() => window.location.reload()}
           className="mt-2 text-sm text-red-700 hover:text-red-900 underline"
         >
-          Thử lại
+          Try again
         </button>
       </div>
     );
@@ -87,10 +87,10 @@ export default function CvFilesTable(props: CvFilesTableProps) {
       {/* Total CV count and Delete button */}
       <div className="mb-3 flex items-center justify-between min-h-[32px]">
         <p className="text-sm text-gray-700">
-          Tổng số CV: <span className="font-semibold">{totalCvFiles}</span>
+          Total CVs: <span className="font-semibold">{totalCvFiles}</span>
           {getSelectedCount() > 0 && (
             <span className="ml-3 text-indigo-600">
-              (Đã chọn: {getSelectedCount()})
+              (Selected: {getSelectedCount()})
             </span>
           )}
         </p>
@@ -100,14 +100,14 @@ export default function CvFilesTable(props: CvFilesTableProps) {
             disabled={isDeleting}
             className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            Hủy
+            Cancel
           </button>
           <button
             onClick={handleDeleteSelected}
             disabled={isDeleting}
             className="px-3 py-1 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            {isDeleting ? 'Đang xóa...' : `Xóa ${getSelectedCount()} file`}
+            {isDeleting ? 'Deleting...' : `Delete ${getSelectedCount()} file(s)`}
           </button>
         </div>
       </div>
@@ -137,7 +137,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                 ></path>
               </svg>
-              <p className="text-xs text-gray-600">Đang cập nhật...</p>
+              <p className="text-xs text-gray-600">Updating...</p>
             </div>
           </div>
         )}
@@ -160,16 +160,16 @@ export default function CvFilesTable(props: CvFilesTableProps) {
                   </div>
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider" style={{ width: '240px' }}>
-                  Tên file
+                  File name
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Kích thước
+                  Size
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Ngày upload
+                  Upload date
                 </th>
                 <th className="px-3 py-2 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
-                  Thao tác
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -222,7 +222,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(file.uploadDate).toLocaleDateString('vi-VN', {
+                      {new Date(file.uploadDate).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',
@@ -235,7 +235,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
                         onClick={() => handleRemoveBackendFileClick(file.id.toString(), file.name)}
                         disabled={isDeleting}
                         className="text-red-600 hover:text-red-800 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Xóa file"
+                        title="Delete file"
                       >
                         <svg
                           className="w-4 h-4 mx-auto"
@@ -301,7 +301,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
                       {(file.size / 1024 / 1024).toFixed(2)} MB
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                      {new Date().toLocaleDateString('vi-VN', {
+                      {new Date().toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',
@@ -313,7 +313,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
                       <button
                         onClick={() => handleRemoveNewFile(file)}
                         className="text-red-600 hover:text-red-800 transition cursor-pointer"
-                        title="Xóa file"
+                        title="Delete file"
                       >
                         <svg
                           className="w-4 h-4 mx-auto"
@@ -344,7 +344,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between">
           <div className="text-sm text-gray-700">
-            Trang {currentPage} / {totalPages}
+            Page {currentPage} / {totalPages}
           </div>
           <div className="flex items-center space-x-2">
             <button
@@ -352,7 +352,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
               disabled={currentPage === 1}
               className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              Trước
+              Previous
             </button>
             <div className="flex items-center space-x-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
@@ -386,7 +386,7 @@ export default function CvFilesTable(props: CvFilesTableProps) {
               disabled={currentPage === totalPages}
               className="px-3 py-1 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
-              Sau
+              Next
             </button>
           </div>
         </div>
@@ -395,14 +395,14 @@ export default function CvFilesTable(props: CvFilesTableProps) {
       {/* Confirmation Popup */}
       <ConfirmDialog
         isOpen={!!fileToDelete}
-        title="Xác nhận xóa file"
+        title="Confirm file deletion"
         message={fileToDelete?.id === 'multiple' 
-          ? `Bạn có chắc chắn muốn xóa ${getSelectedCount()} file đã chọn không?`
-          : "Bạn có chắc chắn muốn xóa file này không?"}
+          ? `Are you sure you want to delete ${getSelectedCount()} selected file(s)?`
+          : "Are you sure you want to delete this file?"}
         detailText={fileToDelete?.id === 'multiple' ? undefined : fileToDelete?.name}
-        warningText="Hành động này không thể hoàn tác."
-        confirmText="Xóa"
-        cancelText="Hủy"
+        warningText="This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
         isLoading={isDeleting}

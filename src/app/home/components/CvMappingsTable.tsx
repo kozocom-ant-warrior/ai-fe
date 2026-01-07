@@ -49,7 +49,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
 
   const handleSkillsChange = (newSelected: SkillOption[]) => {
     setSelectedSkills(newSelected);
-    // Nếu xóa hết thì cũng xóa bộ lọc đã áp dụng
+    // If all are removed, also clear the applied filter
     if (newSelected.length === 0) {
       setAppliedSkills([]);
     }
@@ -89,7 +89,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
     <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold text-gray-900">
-          Kết quả Matching CV ({filteredCvMappings.length}/{cvMappings.length})
+          CV Matching Results ({filteredCvMappings.length}/{cvMappings.length})
         </h2>
       </div>
       
@@ -107,19 +107,19 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Ứng viên
+                Candidate
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Thông tin
+                Information
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Kỹ năng
+                Skills
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Điểm số
+                Score
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Đánh giá
+                Evaluation
               </th>
             </tr>
           </thead>
@@ -142,7 +142,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-gray-400 hover:text-blue-600 transition-colors"
-                        aria-label="Mở CV trong tab mới"
+                        aria-label="Open CV in new tab"
                       >
                         <svg
                           className="w-4 h-4"
@@ -168,7 +168,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                   <div className="text-sm text-gray-900">
                     <div className="font-medium">{cv.position}</div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {cv.experience_years} năm kinh nghiệm
+                      {cv.experience_years} years of experience
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
                       {cv.education.degree}
@@ -201,11 +201,11 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                     </span>
                     <div className="mt-2 text-xs text-gray-500">
                       <div className="text-green-600">
-                        ✓ {cv.scope.matched_requirements.length} phù hợp
+                        ✓ {cv.scope.matched_requirements.length} matched
                       </div>
                       {cv.scope.missing_requirements.length > 0 && (
                         <div className="text-red-600">
-                          ✗ {cv.scope.missing_requirements.length} thiếu
+                          ✗ {cv.scope.missing_requirements.length} missing
                         </div>
                       )}
                     </div>
@@ -218,14 +218,14 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       <div className="mt-2">
                         <div className="flex items-center justify-between mb-1">
                           <div className="text-xs font-medium text-gray-600">
-                            Phù hợp:
+                            Matched:
                           </div>
                           {cv.scope.matched_requirements.length > 3 && (
                             <button
                               onClick={() => toggleMatched(cv.cv_id)}
                               className="text-xs text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                             >
-                              {expandedMatched.has(cv.cv_id) ? 'Thu gọn' : `Xem tất cả (${cv.scope.matched_requirements.length})`}
+                              {expandedMatched.has(cv.cv_id) ? 'Collapse' : `View all (${cv.scope.matched_requirements.length})`}
                             </button>
                           )}
                         </div>
@@ -246,14 +246,14 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       <div className="mt-2">
                         <div className="flex items-center justify-between mb-1">
                           <div className="text-xs font-medium text-gray-600">
-                            Thiếu:
+                            Missing:
                           </div>
                           {cv.scope.missing_requirements.length > 3 && (
                             <button
                               onClick={() => toggleMissing(cv.cv_id)}
                               className="text-xs text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
                             >
-                              {expandedMissing.has(cv.cv_id) ? 'Thu gọn' : `Xem tất cả (${cv.scope.missing_requirements.length})`}
+                              {expandedMissing.has(cv.cv_id) ? 'Collapse' : `View all (${cv.scope.missing_requirements.length})`}
                             </button>
                           )}
                         </div>
@@ -275,7 +275,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       {cv.duplicate_warning == '1' && (
                         <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2">
                           <div className="text-xs font-medium text-yellow-800 mb-1">
-                            ⚠ Cảnh báo trùng lặp:
+                            ⚠ Duplicate warning:
                           </div>
                           <div className="text-xs text-yellow-700">
                             {cv.duplicate_warning}
@@ -286,7 +286,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       {cv.cv_presentation_comment && (
                         <div>
                           <div className="text-xs font-medium text-gray-600 mb-1">
-                            Nhận xét CV:
+                            CV Comments:
                           </div>
                           <div className="text-xs text-gray-500">
                             {cv.cv_presentation_comment}
@@ -297,7 +297,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       {cv.suggested_roles && cv.suggested_roles.length > 0 && (
                         <div>
                           <div className="text-xs font-medium text-gray-600 mb-1">
-                            Vị trí đề xuất:
+                            Suggested Roles:
                           </div>
                           <div className="flex flex-wrap gap-1">
                             {cv.suggested_roles.map((role, idx) => (
@@ -315,7 +315,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       {cv.cert_comment && (
                         <div>
                           <div className="text-xs font-medium text-gray-600 mb-1">
-                            Nhận xét chứng chỉ:
+                            Certificate Comments:
                           </div>
                           <div className="text-xs text-gray-500">
                             {cv.cert_comment}
@@ -326,7 +326,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       {cv.interview_questions && cv.interview_questions.length > 0 && (
                         <div>
                           <div className="text-xs font-medium text-gray-600 mb-1">
-                            Câu hỏi phỏng vấn đề xuất:
+                            Suggested Interview Questions:
                           </div>
                           <ul className="text-xs text-gray-500 space-y-1">
                             {cv.interview_questions.map((question, idx) => (

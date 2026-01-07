@@ -1,8 +1,8 @@
 import { fetchAuthSession } from 'aws-amplify/auth';
 
 /**
- * Lấy access token từ Amplify session
- * @returns Promise<string | null> Access token hoặc null nếu không có
+ * Get access token from Amplify session
+ * @returns Promise<string | null> Access token or null if not available
  */
 export async function getAccessToken(): Promise<string | null> {
   try {

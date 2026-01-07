@@ -65,7 +65,7 @@ export async function fetchFiles(): Promise<CvFileFromBackend[]> {
     return transformedFiles;
   } catch (err) {
     console.error('Error fetching files:', err);
-    throw new Error('Có lỗi xảy ra khi tải danh sách file');
+    throw new Error('An error occurred while loading file list');
   }
 }
 
@@ -79,7 +79,7 @@ export async function deleteFile(id: string): Promise<void> {
     await apiClient.delete(`cv/files/${id}`);
   } catch (err) {
     console.error('Error deleting file:', err);
-    throw new Error('Có lỗi xảy ra khi xóa file');
+    throw new Error('An error occurred while deleting file');
   }
 }
 

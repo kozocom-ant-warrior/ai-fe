@@ -25,7 +25,7 @@ export default function Login() {
     e.preventDefault();
     
     if (!email || !password) {
-      toast.error('Vui lòng nhập đầy đủ thông tin');
+      toast.error('Please fill in all information');
       return;
     }
 
@@ -34,10 +34,10 @@ export default function Login() {
       await auth.login(email, password);
       // If no challenge, will automatically redirect
       if (!auth.requiresNewPassword) {
-        toast.success('Đăng nhập thành công!');
+        toast.success('Login successful!');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+      toast.error(err.message || 'Login failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -47,26 +47,26 @@ export default function Login() {
     e.preventDefault();
     
     if (!newPassword || !confirmPassword) {
-      toast.error('Vui lòng nhập đầy đủ thông tin');
+      toast.error('Please fill in all information');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('Mật khẩu mới và xác nhận mật khẩu không khớp');
+      toast.error('New password and confirm password do not match');
       return;
     }
 
     if (newPassword.length < 8) {
-      toast.error('Mật khẩu phải có ít nhất 8 ký tự');
+      toast.error('Password must be at least 8 characters');
       return;
     }
 
     setIsSubmitting(true);
     try {
       await auth.confirmNewPassword(newPassword);
-      toast.success('Đặt mật khẩu mới thành công!');
+      toast.success('New password set successfully!');
     } catch (err: any) {
-      toast.error(err.message || 'Đặt mật khẩu mới thất bại. Vui lòng thử lại.');
+      toast.error(err.message || 'Failed to set new password. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -76,7 +76,7 @@ export default function Login() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="text-center">
-          <div className="text-xl font-semibold text-gray-700">Đang tải...</div>
+          <div className="text-xl font-semibold text-gray-700">Loading...</div>
         </div>
       </div>
     );
@@ -88,14 +88,14 @@ export default function Login() {
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Đặt mật khẩu mới</h1>
-            <p className="mt-2 text-gray-600">Vui lòng đặt mật khẩu mới cho tài khoản của bạn</p>
+            <h1 className="text-3xl font-bold text-gray-900">Set New Password</h1>
+            <p className="mt-2 text-gray-600">Please set a new password for your account</p>
           </div>
           
           <form onSubmit={handleNewPasswordSubmit} className="space-y-6">
             <div>
               <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Mật khẩu mới
+                New Password
               </label>
               <input
                 id="newPassword"
@@ -103,7 +103,7 @@ export default function Login() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
-                placeholder="Nhập mật khẩu mới (tối thiểu 8 ký tự)"
+                placeholder="Enter new password (minimum 8 characters)"
                 disabled={isSubmitting}
                 autoComplete="new-password"
                 minLength={8}
@@ -112,7 +112,7 @@ export default function Login() {
             
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
-                Xác nhận mật khẩu
+                Confirm Password
               </label>
               <input
                 id="confirmPassword"
@@ -120,7 +120,7 @@ export default function Login() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
-                placeholder="Nhập lại mật khẩu mới"
+                placeholder="Re-enter new password"
                 disabled={isSubmitting}
                 autoComplete="new-password"
                 minLength={8}
@@ -138,7 +138,7 @@ export default function Login() {
               disabled={isSubmitting}
               className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Đang xử lý...' : 'Xác nhận mật khẩu mới'}
+              {isSubmitting ? 'Processing...' : 'Confirm New Password'}
             </button>
           </form>
         </div>
@@ -150,8 +150,8 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">Đăng nhập</h1>
-          <p className="mt-2 text-gray-600">Chào mừng trở lại</p>
+          <h1 className="text-3xl font-bold text-gray-900">Login</h1>
+          <p className="mt-2 text-gray-600">Welcome back</p>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -165,7 +165,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
-              placeholder="Nhập email"
+              placeholder="Enter email"
               disabled={isSubmitting}
               autoComplete="email"
             />
@@ -173,7 +173,7 @@ export default function Login() {
           
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Mật khẩu
+              Password
             </label>
             <input
               id="password"
@@ -181,7 +181,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition"
-              placeholder="Nhập mật khẩu"
+              placeholder="Enter password"
               disabled={isSubmitting}
               autoComplete="current-password"
             />
@@ -198,7 +198,7 @@ export default function Login() {
             disabled={isSubmitting}
             className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {isSubmitting ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

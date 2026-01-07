@@ -50,7 +50,7 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   } catch (err: any) {
     console.error('Error logging in:', err);
     throw new Error(
-      err.response?.data?.message || 'Có lỗi xảy ra khi đăng nhập'
+      err.response?.data?.message || 'An error occurred while logging in'
     );
   }
 }
@@ -79,7 +79,7 @@ export async function getCurrentUser(): Promise<UserInfo> {
   } catch (err: any) {
     console.error('Error getting current user:', err);
     throw new Error(
-      err.response?.data?.message || 'Có lỗi xảy ra khi lấy thông tin người dùng'
+      err.response?.data?.message || 'An error occurred while fetching user information'
     );
   }
 }

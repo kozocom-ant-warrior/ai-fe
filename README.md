@@ -1,14 +1,14 @@
 # AI-FE
 Kozocom HireGraph - CV Semantic Search Engine
 
-## Mô tả
-Ứng dụng web Next.js để tìm kiếm CV theo ngữ nghĩa, giúp nhà tuyển dụng tìm ứng viên phù hợp nhất với mô tả công việc.
+## Description
+Next.js web application for semantic CV search, helping recruiters find the most suitable candidates for job descriptions.
 
-## Yêu cầu hệ thống
+## System Requirements
 - Node.js >= 18.x
-- npm hoặc yarn hoặc pnpm
+- npm or yarn or pnpm
 
-## Hướng dẫn cài đặt
+## Installation Guide
 
 ### 1. Clone repository
 ```bash
@@ -16,17 +16,17 @@ git clone <repository-url>
 cd ai-fe
 ```
 
-### 2. Cài đặt dependencies
+### 2. Install dependencies
 ```bash
 npm install
-# hoặc
+# or
 yarn install
-# hoặc
+# or
 pnpm install
 ```
 
-### 3. Cấu hình biến môi trường
-Tạo file `.env.local` trong thư mục gốc của project với nội dung sau:
+### 3. Configure environment variables
+Create a `.env.local` file in the project root directory with the following content:
 
 ```env
 # AWS Cognito Configuration
@@ -39,60 +39,60 @@ NEXT_PUBLIC_DOMAIN=
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
 ```
 
-**Lưu ý:** 
-- Thay đổi các giá trị trên theo môi trường của bạn
-- File `.env.local` không được commit lên git (đã có trong `.gitignore`)
+**Note:** 
+- Change the values above according to your environment
+- The `.env.local` file should not be committed to git (already in `.gitignore`)
 
-### 4. Chạy ứng dụng
+### 4. Run the application
 
 #### Development mode
 ```bash
 npm run dev
-# hoặc
+# or
 yarn dev
-# hoặc
+# or
 pnpm dev
 ```
 
-Ứng dụng sẽ chạy tại: http://localhost:3000
+The application will run at: http://localhost:3000
 
 #### Production mode
 ```bash
-# Build ứng dụng
+# Build the application
 npm run build
 
-# Chạy production server
+# Run production server
 npm start
 ```
 
-### 5. Kiểm tra
-Mở trình duyệt và truy cập: http://localhost:3000
+### 5. Verify
+Open your browser and access: http://localhost:3000
 
-## Cấu trúc thư mục
+## Directory Structure
 
 ```
 ai-fe/
 ├── src/
 │   ├── app/              # Next.js App Router
-│   │   ├── api/         # API routes và services
-│   │   ├── components/  # React components dùng chung
-│   │   ├── home/        # Trang chủ và components
+│   │   ├── api/         # API routes and services
+│   │   ├── components/  # Shared React components
+│   │   ├── home/        # Home page and components
 │   │   ├── providers/   # Context providers
 │   │   ├── schemas/     # Zod validation schemas
 │   │   └── types/       # TypeScript type definitions
 │   └── configs/         # Configuration files
 ├── public/              # Static files
-└── package.json         # Dependencies và scripts
+└── package.json         # Dependencies and scripts
 ```
 
-## Scripts có sẵn
+## Available Scripts
 
-- `npm run dev` - Chạy development server
-- `npm run build` - Build ứng dụng cho production
-- `npm start` - Chạy production server
-- `npm run lint` - Chạy ESLint để kiểm tra code
+- `npm run dev` - Run development server
+- `npm run build` - Build application for production
+- `npm start` - Run production server
+- `npm run lint` - Run ESLint to check code
 
-## Công nghệ sử dụng
+## Technologies Used
 
 - **Next.js 16** - React framework
 - **TypeScript** - Type safety
@@ -102,27 +102,27 @@ ai-fe/
 - **Axios** - HTTP client
 - **React Hot Toast** - Notifications
 
-## Xử lý lỗi thường gặp
+## Common Issues and Solutions
 
-### Lỗi kết nối API
-- Kiểm tra `NEXT_PUBLIC_API_BASE_URL` trong file `.env.local`
-- Đảm bảo API server đang chạy
+### API Connection Error
+- Check `NEXT_PUBLIC_API_BASE_URL` in `.env.local` file
+- Ensure API server is running
 
-### Lỗi xác thực
-- Kiểm tra các biến môi trường AWS Cognito
-- Xác nhận User Pool ID và Client ID đúng
+### Authentication Error
+- Check AWS Cognito environment variables
+- Verify User Pool ID and Client ID are correct
 
-### Lỗi build
-- Xóa thư mục `.next` và `node_modules`, sau đó chạy lại `npm install`
-- Kiểm tra version Node.js (yêu cầu >= 18.x)
+### Build Error
+- Delete `.next` and `node_modules` folders, then run `npm install` again
+- Check Node.js version (requires >= 18.x)
 
-## Đóng góp
+## Contributing
 
-1. Fork repository
-2. Tạo feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Mở Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 Private - Kozocom

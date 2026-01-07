@@ -77,9 +77,9 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
 
     setIsThinking(true);
     try {
-      // Thêm text về số CV vào jdText nếu là input type text
+      // Add text about CV count to jdText if input type is text
       const finalJdText = jdInputType === 'text' 
-        ? `${jdText}\n\nChỉ lấy về ${maxCvCount} CV, không lấy hơn`
+        ? `${jdText}\n\nOnly return ${maxCvCount} CVs, no more`
         : undefined;
 
       const response = await sendThinkingRequest({
@@ -99,7 +99,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
       }
     } catch (error: any) {
       console.error('Error sending thinking request:', error);
-      alert(error.message || 'Có lỗi xảy ra khi gửi yêu cầu');
+      alert(error.message || 'An error occurred while sending request');
       onThinkingSuccess?.([]);
     } finally {
       setIsThinking(false);
@@ -141,14 +141,14 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
   return (
     <div className="bg-white shadow-sm p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-4">
-          Job Description & Yêu cầu
+          Job Description & Requirements
         </h2>
         
         <div className="space-y-6">
         {/* JD Input Type Switch */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Chọn cách nhập JD
+            Select JD input method
           </label>
           <div className="flex items-center space-x-6">
             <label className="flex items-center cursor-pointer">
@@ -160,7 +160,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
                 onChange={(e) => setJdInputType(e.target.value as 'text' | 'file')}
                 className="w-4 h-4 text-indigo-600 focus:ring-indigo-500 focus:ring-2"
               />
-              <span className="ml-2 text-sm text-gray-700">Nhập text</span>
+              <span className="ml-2 text-sm text-gray-700">Enter text</span>
             </label>
             <label className="flex items-center cursor-pointer">
               <input
@@ -186,7 +186,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
               htmlFor="jd-text"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Mô tả công việc (JD) <span className="text-red-500">*</span>
+              Job Description (JD) <span className="text-red-500">*</span>
             </label>
             <div className="flex items-stretch gap-2 w-full">
               <textarea
@@ -204,7 +204,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
                     : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-200'
                 }`}
-                placeholder="Nhập mô tả công việc tại đây..."
+                placeholder="Enter job description here..."
               />
               {onMaxCvCountChange && (
                 <div className={`flex items-center gap-1 self-stretch pl-2 pr-0 rounded-lg border flex-shrink-0 w-[90px] bg-gray-200 ${
@@ -215,7 +215,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
                   <span className="text-xs text-gray-700 flex-1 min-w-0 text-center flex flex-col items-center justify-center font-bold">
                     {maxCvCount}
                     <br />
-                    CV sẽ trả về
+                    CVs to return
                   </span>
                   <div className="flex flex-col gap-0.5 h-full flex-shrink-0">
                     <button
@@ -228,7 +228,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
                       }}
                       disabled={totalCvCount === 0 || maxCvCount >= totalCvCount}
                       className="group flex items-center justify-center w-8 h-[calc(50%-2px)] rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
-                      aria-label="Tăng giá trị"
+                      aria-label="Increase value"
                     >
                       <svg className="w-3 h-3 stroke-white group-disabled:stroke-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -242,7 +242,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
                       }}
                       disabled={totalCvCount === 0 || maxCvCount <= 1}
                       className="group flex items-center justify-center w-8 h-[calc(50%-2px)] rounded bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
-                      aria-label="Giảm giá trị"
+                      aria-label="Decrease value"
                     >
                       <svg className="w-3 h-3 stroke-white group-disabled:stroke-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -271,9 +271,9 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
               onFilesSelected={handleJdFilesSelected}
               files={jdFiles}
               onRemoveFile={removeJdFile}
-              placeholderText="Kéo thả hoặc chọn file JD"
-              draggingText="Thả file vào đây"
-              fileTypesText="DOC, DOCX, PDF (MAX. 10MB mỗi file)"
+              placeholderText="Drag and drop or select JD file"
+              draggingText="Drop file here"
+              fileTypesText="DOC, DOCX, PDF (MAX. 10MB per file)"
               disabled={isThinking}
             />
           </div>
@@ -286,7 +286,7 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
             onClick={handleThinking}
             disabled={isThinking || !isFormValid()}
             isLoading={isThinking}
-            loadingText="Đang xử lý..."
+            loadingText="Processing..."
             fullWidth={true}
             variant="primary"
           />

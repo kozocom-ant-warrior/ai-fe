@@ -46,7 +46,7 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm font-medium text-gray-700">Nâng cao</span>
+        <span className="text-sm font-medium text-gray-700">Advanced</span>
         <label className="flex items-center cursor-pointer">
           <input
             type="checkbox"
@@ -55,7 +55,7 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
             className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
           />
           <span className="ml-2 text-sm font-medium text-gray-700">
-            Chọn tất cả
+            Select all
           </span>
         </label>
       </div>
@@ -69,7 +69,7 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
               className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
             />
             <span className="ml-3 text-sm text-gray-700">
-              So khớp trùng lặp / giả mạo
+              Detect duplicates / fraud
             </span>
           </label>
 
@@ -81,7 +81,7 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
               className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
             />
             <span className="ml-3 text-sm text-gray-700">
-              Trình bày CV (độ chuyên nghiệp)
+              CV presentation (professionalism)
             </span>
           </label>
 
@@ -93,7 +93,7 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
               className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
             />
             <span className="ml-3 text-sm text-gray-700">
-              Câu hỏi phỏng vấn theo level
+              Interview questions by level
             </span>
           </label>
 
@@ -105,7 +105,7 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
               className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
             />
             <span className="ml-3 text-sm text-gray-700">
-              CV fail → gợi ý role khác
+              CV fail → suggest other roles
             </span>
           </label>
 

@@ -53,7 +53,7 @@ export function useCvFilesTable({
         setCvFilesFromBackend(transformedFiles);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi tải danh sách file';
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred while loading file list';
       setError(errorMessage);
       toast.error(errorMessage);
       if (isRefresh) {
@@ -165,14 +165,14 @@ export function useCvFilesTable({
       
       // Show success notification with toast
       const fileName = fileToDelete.name;
-      toast.success(`Đã xóa file "${fileName}" thành công.`);
+      toast.success(`File "${fileName}" deleted successfully.`);
       
       // Refresh file list after successful deletion
       await loadFiles(true);
     } catch (err) {
       // Revert optimistic update if there is an error
       setCvFilesFromBackend(originalFiles);
-      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi xóa file';
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred while deleting file';
       setError(errorMessage);
       toast.error(errorMessage);
       console.error('Error deleting file:', err);
@@ -300,14 +300,14 @@ export function useCvFilesTable({
       await Promise.all(deletePromises);
       
       // Show success notification
-      toast.success(`Đã xóa ${filesToDelete.length + indicesToDelete.length} file thành công.`);
+      toast.success(`Successfully deleted ${filesToDelete.length + indicesToDelete.length} file(s).`);
       
       // Refresh file list after successful deletion
       await loadFiles(true);
     } catch (err) {
       // Revert optimistic update if there is an error
       setCvFilesFromBackend(originalBackendFiles);
-      const errorMessage = err instanceof Error ? err.message : 'Có lỗi xảy ra khi xóa file';
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred while deleting file';
       setError(errorMessage);
       toast.error(errorMessage);
       console.error('Error deleting files:', err);

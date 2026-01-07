@@ -3,13 +3,13 @@ import { z } from 'zod';
 // Schema for text input type
 export const textInputSchema = z.object({
   jdInputType: z.literal('text'),
-  jdText: z.string().min(1, 'Mô tả công việc (JD) là bắt buộc'),
+  jdText: z.string().min(1, 'Job Description (JD) is required'),
 });
 
 // Schema for file input type
 export const fileInputSchema = z.object({
   jdInputType: z.literal('file'),
-  jdFiles: z.array(z.instanceof(File)).min(1, 'Vui lòng upload ít nhất một file JD'),
+  jdFiles: z.array(z.instanceof(File)).min(1, 'Please upload at least one JD file'),
 });
 
 // Main schema using discriminated union
