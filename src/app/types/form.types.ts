@@ -2,10 +2,9 @@
 
 export interface AdvancedOptionsState {
   scoreMatching: boolean;
-  detectDuplicate: boolean;
   cvPresentation: boolean;
   interviewQuestions: boolean;
-  suggestOtherRoles: boolean;
+  jobLeveling: boolean;
   certBenefit: boolean;
 }
 

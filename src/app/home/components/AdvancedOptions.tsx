@@ -9,10 +9,9 @@ export type { AdvancedOptionsState };
 export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProps) {
   const [options, setOptions] = useState<AdvancedOptionsState>({
     scoreMatching: false,
-    detectDuplicate: false,
     cvPresentation: false,
     interviewQuestions: false,
-    suggestOtherRoles: false,
+    jobLeveling: false,
     certBenefit: false,
   });
 
@@ -33,10 +32,9 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
     const newValue = !allChecked;
     const newOptions: AdvancedOptionsState = {
       scoreMatching: newValue,
-      detectDuplicate: newValue,
       cvPresentation: newValue,
       interviewQuestions: newValue,
-      suggestOtherRoles: newValue,
+      jobLeveling: newValue,
       certBenefit: newValue,
     };
     setOptions(newOptions);
@@ -64,18 +62,6 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
           <label className="flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={options.detectDuplicate}
-              onChange={() => handleOptionChange('detectDuplicate')}
-              className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
-            />
-            <span className="ml-3 text-sm text-gray-700">
-              Detect duplicates / fraud
-            </span>
-          </label>
-
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="checkbox"
               checked={options.cvPresentation}
               onChange={() => handleOptionChange('cvPresentation')}
               className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
@@ -100,12 +86,12 @@ export default function AdvancedOptions({ onOptionsChange }: AdvancedOptionsProp
           <label className="flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={options.suggestOtherRoles}
-              onChange={() => handleOptionChange('suggestOtherRoles')}
+              checked={options.jobLeveling}
+              onChange={() => handleOptionChange('jobLeveling')}
               className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
             />
             <span className="ml-3 text-sm text-gray-700">
-              CV fail → suggest other roles
+              Job leveling
             </span>
           </label>
 

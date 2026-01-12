@@ -272,7 +272,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                     )}
                     
                     <div className="mt-4 pt-4 border-t border-gray-200 space-y-3">
-                      {cv.duplicate_warning == '1' && (
+                      {/* {cv.duplicate_warning == '1' && (
                         <div className="bg-yellow-50 border border-yellow-200 rounded-md p-2">
                           <div className="text-xs font-medium text-yellow-800 mb-1">
                             ⚠ Duplicate warning:
@@ -281,7 +281,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                             {cv.duplicate_warning}
                           </div>
                         </div>
-                      )}
+                      )} */}
                       
                       {cv.cv_presentation_comment && (
                         <div>
@@ -289,25 +289,20 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                             CV Comments:
                           </div>
                           <div className="text-xs text-gray-500">
+                            <span className="text-blue-500 mr-1">•</span>
                             {cv.cv_presentation_comment}
                           </div>
                         </div>
                       )}
                       
-                      {cv.suggested_roles && cv.suggested_roles.length > 0 && (
+                      {cv.job_leveling && (
                         <div>
                           <div className="text-xs font-medium text-gray-600 mb-1">
-                            Suggested Roles:
+                            Job Leveling:
                           </div>
-                          <div className="flex flex-wrap gap-1">
-                            {cv.suggested_roles.map((role, idx) => (
-                              <span
-                                key={idx}
-                                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800"
-                              >
-                                {role}
-                              </span>
-                            ))}
+                          <div className="text-xs text-gray-500">
+                            <span className="text-blue-500 mr-1">•</span>
+                            {Array.isArray(cv.job_leveling) ? cv.job_leveling.join(', ') : cv.job_leveling}
                           </div>
                         </div>
                       )}
@@ -318,6 +313,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                             Certificate Comments:
                           </div>
                           <div className="text-xs text-gray-500">
+                            <span className="text-blue-500 mr-1">•</span>
                             {cv.cert_comment}
                           </div>
                         </div>
