@@ -17,10 +17,9 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
   const [jdText, setJdText] = useState('');
   const [advancedOptions, setAdvancedOptions] = useState<AdvancedOptionsState>({
     scoreMatching: false,
-    detectDuplicate: false,
     cvPresentation: false,
     interviewQuestions: false,
-    suggestOtherRoles: false,
+    jobLeveling: false,
     certBenefit: false,
   });
   const [isThinking, setIsThinking] = useState(false);
@@ -75,15 +74,24 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
       return;
     }
 
+    // Get the ACTUAL current value from textarea element to avoid stale state
+    const textareaElement = document.getElementById('jd-text') as HTMLTextAreaElement;
+    const actualJdText = textareaElement ? textareaElement.value : jdText;
+
     setIsThinking(true);
     try {
-      // Add text about CV count to jdText if input type is text
-      const finalJdText = jdInputType === 'text' 
-        ? `${jdText}\n\nOnly return ${maxCvCount} CVs, no more`
-        : undefined;
-
+      // Debug: Log JD text being sent
+      console.log('=== SENDING THINKING REQUEST ===');
+      console.log('JD Text (from state):', jdText);
+      console.log('JD Text (from DOM):', actualJdText);
+      console.log('JD Text Length:', actualJdText.length);
+      console.log('Max CV Count:', maxCvCount);
+      console.log('Advanced Options:', advancedOptions);
+      
+      // Send JD text as-is, without appending max_cv_count instruction
+      // max_cv_count is sent separately as a parameter to avoid cache misses
       const response = await sendThinkingRequest({
-        jdText: finalJdText,
+        jdText: jdInputType === 'text' ? actualJdText : undefined,
         jdFiles: jdInputType === 'file' ? jdFiles : undefined,
         advancedOptions,
         maxCvCount,
@@ -128,10 +136,9 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
     setJdText('');
     setAdvancedOptions({
       scoreMatching: false,
-      detectDuplicate: false,
       cvPresentation: false,
       interviewQuestions: false,
-      suggestOtherRoles: false,
+      jobLeveling: false,
       certBenefit: false,
     });
     setErrors({});
@@ -193,7 +200,13 @@ export default function JdInputSection({ onThinkingSuccess, maxCvCount = 5, onMa
                 id="jd-text"
                 value={jdText}
                 onChange={(e) => {
-                  setJdText(e.target.value);
+                  const newValue = e.target.value;
+                  console.log('📝 Textarea onChange:', {
+                    oldValue: jdText,
+                    newValue: newValue,
+                    valueChanged: jdText !== newValue
+                  });
+                  setJdText(newValue);
                   if (errors.jdText) {
                     setErrors(prev => ({ ...prev, jdText: undefined }));
                   }

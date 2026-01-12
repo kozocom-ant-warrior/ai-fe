@@ -22,7 +22,7 @@ export interface CvMapping {
   duplicate_warning: string | null;
   cv_presentation_comment: string;
   interview_questions: string[];
-  suggested_roles: string[];
+  job_leveling: string[];
   cert_comment: string;
   file_id: number;
 }
