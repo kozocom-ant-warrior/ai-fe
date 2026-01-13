@@ -1,5 +1,13 @@
 // CV related types
 
+export interface CvPresentationComment {
+  structure: string;
+  strengths: string[];
+  issues: string[];
+  highlights: string;
+  suggestions: string[];
+}
+
 export interface CvMapping {
   cv_id: string;
   candidate_name: string;
@@ -20,9 +28,10 @@ export interface CvMapping {
   };
   mapping_description: string;
   duplicate_warning: string | null;
-  cv_presentation_comment: string;
+  cv_presentation_comment: string | CvPresentationComment;
   interview_questions: string[];
   job_leveling: string[];
+  job_leveling_reason?: string;
   cert_comment: string;
   file_id: number;
 }

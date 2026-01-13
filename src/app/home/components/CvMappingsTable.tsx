@@ -284,14 +284,68 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                       )} */}
                       
                       {cv.cv_presentation_comment && (
-                        <div>
-                          <div className="text-xs font-medium text-gray-600 mb-1">
-                            CV Comments:
+                        <div className="bg-gray-50 rounded-lg p-3">
+                          <div className="text-xs font-semibold text-gray-700 mb-2 flex items-center gap-1">
+                            <span>📋</span> CV Analysis
                           </div>
-                          <div className="text-xs text-gray-500">
-                            <span className="text-blue-500 mr-1">•</span>
-                            {cv.cv_presentation_comment}
-                          </div>
+                          {typeof cv.cv_presentation_comment === 'string' ? (
+                            <div className="text-xs text-gray-600">
+                              {cv.cv_presentation_comment}
+                            </div>
+                          ) : (
+                            <div className="text-xs space-y-3">
+                              {/* Structure */}
+                              <div className="bg-white rounded p-2">
+                                <div className="font-semibold text-blue-700 mb-1">📐 Structure</div>
+                                <div className="text-gray-600 leading-relaxed">{cv.cv_presentation_comment.structure}</div>
+                              </div>
+                              
+                              {/* Strengths */}
+                              <div className="bg-white rounded p-2">
+                                <div className="font-semibold text-green-700 mb-1">✅ Strengths</div>
+                                <ul className="space-y-1">
+                                  {cv.cv_presentation_comment.strengths.map((s, i) => (
+                                    <li key={i} className="text-gray-600 leading-relaxed flex items-start gap-2">
+                                      <span className="text-green-500 mt-0.5">•</span>
+                                      <span>{s}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              
+                              {/* Issues */}
+                              <div className="bg-white rounded p-2">
+                                <div className="font-semibold text-red-700 mb-1">⚠️ Issues</div>
+                                <ul className="space-y-1">
+                                  {cv.cv_presentation_comment.issues.map((issue, i) => (
+                                    <li key={i} className="text-gray-600 leading-relaxed flex items-start gap-2">
+                                      <span className="text-red-500 mt-0.5">•</span>
+                                      <span>{issue}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              
+                              {/* Highlights */}
+                              <div className="bg-white rounded p-2">
+                                <div className="font-semibold text-yellow-700 mb-1">⭐ Highlights</div>
+                                <div className="text-gray-600 leading-relaxed">{cv.cv_presentation_comment.highlights}</div>
+                              </div>
+                              
+                              {/* Suggestions */}
+                              <div className="bg-white rounded p-2">
+                                <div className="font-semibold text-purple-700 mb-1">💡 Suggestions</div>
+                                <ul className="space-y-1">
+                                  {cv.cv_presentation_comment.suggestions.map((sug, i) => (
+                                    <li key={i} className="text-gray-600 leading-relaxed flex items-start gap-2">
+                                      <span className="text-purple-500 mt-0.5">•</span>
+                                      <span>{sug}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                       
@@ -301,8 +355,21 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                             Job Leveling:
                           </div>
                           <div className="text-xs text-gray-500">
-                            <span className="text-blue-500 mr-1">•</span>
-                            {Array.isArray(cv.job_leveling) ? cv.job_leveling.join(', ') : cv.job_leveling}
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                                {Array.isArray(cv.job_leveling) ? cv.job_leveling.join(' → ') : cv.job_leveling}
+                              </span>
+                              {cv.job_leveling_reason && (
+                                <span className="text-gray-400 cursor-help" title={cv.job_leveling_reason}>
+                                  ℹ️
+                                </span>
+                              )}
+                            </div>
+                            {cv.job_leveling_reason && (
+                              <div className="mt-1 text-xs text-gray-500 italic">
+                                {cv.job_leveling_reason}
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
