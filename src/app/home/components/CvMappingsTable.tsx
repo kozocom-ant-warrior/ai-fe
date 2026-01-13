@@ -349,7 +349,7 @@ export default function CvMappingsTable({ cvMappings }: CvMappingsTableProps) {
                         </div>
                       )}
                       
-                      {cv.job_leveling && (
+                      {cv.job_leveling && cv.job_leveling.length > 0 && (
                         <div>
                           <div className="text-xs font-medium text-gray-600 mb-1">
                             Job Leveling:
